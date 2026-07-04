@@ -4,11 +4,11 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Shield, Lock, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Shield, Lock, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createClient } from '@/lib/supabase/client'
 
-export default function LoginPage() {
+export default function SignupPage() {
   const router = useRouter()
   const { setUser } = useAuthStore()
   
@@ -17,6 +17,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isEmailSent, setIsEmailSent] = useState(false)
   
   const [phone, setPhone] = useState('')
   const [otp, setOtp] = useState(['', '', '', '', '', ''])
@@ -26,7 +27,7 @@ export default function LoginPage() {
   
   const otpRefs = useRef<(HTMLInputElement | null)[]>([])
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setErrorMsg('')
     if (!email || !password) {
@@ -37,24 +38,21 @@ export default function LoginPage() {
     setIsSubmitting(true)
     try {
       const supabase = createClient()
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
       })
       
       if (error) throw error
       
-      setUser({
-        id: data.user.id,
-        phone_number: data.user.phone || '',
-        name: data.user.user_metadata?.full_name || null, 
-        language: 'hindi',
-        created_at: new Date().toISOString()
-      })
-      router.push('/onboarding')
+      if (data.user?.identities?.length === 0) {
+        throw new Error('An account with this email already exists. Please log in.')
+      }
+
+      setIsEmailSent(true)
     } catch (error: any) {
       console.error(error)
-      setErrorMsg(error.message || 'Invalid email or password.')
+      setErrorMsg(error.message || 'Failed to create account.')
     } finally {
       setIsSubmitting(false)
     }
@@ -264,38 +262,6 @@ export default function LoginPage() {
             <p style={{ fontSize: '20px', color: '#425466', marginBottom: '64px', lineHeight: '1.6', maxWidth: '420px', fontWeight: '400' }}>
               Store prescriptions, get AI-powered medical insights in your local language, and find generic medicines to save thousands every month.
             </p>
-            
-            {/* Minimal Dashboard Cards */}
-            <div style={{ position: 'relative', height: '240px', display: 'none' }} className="md:block">
-              {/* Card 1 */}
-              <div className="animate-float" style={{ position: 'absolute', top: 0, left: 0, width: '320px', background: '#FAFCFF', border: '1px solid #E6EBF1', borderRadius: '16px', padding: '24px', boxShadow: '0 12px 24px rgba(10,37,64,0.05)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '14px', fontWeight: '600' }}>R</div>
-                    <div>
-                      <div style={{ fontSize: '15px', fontWeight: '700', color: '#0A2540' }}>Rahul Sharma</div>
-                      <div style={{ fontSize: '13px', color: '#8898AA' }}>Blood Report Synced</div>
-                    </div>
-                  </div>
-                  <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#00D924' }}></div>
-                </div>
-                <div style={{ display: 'flex', gap: '8px' }}>
-                  <div style={{ flex: 1, height: '6px', borderRadius: '4px', background: '#E6EBF1' }}></div>
-                  <div style={{ width: '40px', height: '6px', borderRadius: '4px', background: '#635BFF' }}></div>
-                </div>
-              </div>
-
-              {/* Card 2 */}
-              <div className="animate-float-delayed" style={{ position: 'absolute', top: '90px', left: '40px', width: '300px', background: '#FAFCFF', border: '1px solid #E6EBF1', borderRadius: '16px', padding: '16px', boxShadow: '0 12px 24px rgba(10,37,64,0.05)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: '#0A2540' }}>
-                  <div style={{ background: 'rgba(0, 217, 36, 0.1)', padding: '8px', borderRadius: '8px' }}>
-                    <Shield size={16} strokeWidth={2.5} color="#00D924" />
-                  </div>
-                  <div style={{ fontSize: '14px', fontWeight: '700' }}>End-to-End Encrypted</div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
 
@@ -314,14 +280,21 @@ export default function LoginPage() {
             }}>
               
               <div className="text-center mb-8">
-                <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#0A2540', letterSpacing: '-1px', marginBottom: '8px' }}>Welcome back</h2>
-                <p style={{ color: '#425466', fontSize: '15px', lineHeight: '1.5' }}>Sign in to your health vault.</p>
+                <h2 style={{ fontSize: '28px', fontWeight: '800', color: '#0A2540', letterSpacing: '-1px', marginBottom: '8px' }}>Create an account</h2>
+                <p style={{ color: '#425466', fontSize: '15px', lineHeight: '1.5' }}>Join thousands of families securing their health.</p>
               </div>
 
               {errorMsg && (
                 <div style={{ marginBottom: '24px', background: '#FFF0F0', border: '1px solid #FFCDD2', borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
                   <AlertCircle size={18} color="#E02424" style={{ flexShrink: 0, marginTop: '2px' }} />
                   <span style={{ fontSize: '13px', color: '#E02424', fontWeight: '600', lineHeight: '1.4', wordBreak: 'break-word' }}>{errorMsg}</span>
+                </div>
+              )}
+              
+              {isEmailSent && (
+                <div style={{ marginBottom: '24px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '8px', padding: '12px 16px', display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                  <CheckCircle2 size={18} color="#16A34A" style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span style={{ fontSize: '13px', color: '#16A34A', fontWeight: '600', lineHeight: '1.4' }}>Account created! Check your email for the confirmation link.</span>
                 </div>
               )}
 
@@ -336,7 +309,7 @@ export default function LoginPage() {
                       transition={{ duration: 0.2 }}
                       className="w-full"
                     >
-                      <form onSubmit={handleEmailLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      <form onSubmit={handleEmailSignup} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Email Address</label>
                           <div className="premium-input-container" style={{ display: 'flex', border: '1px solid #E6EBF1', borderRadius: '12px', overflow: 'hidden', background: 'white' }}>
@@ -346,6 +319,7 @@ export default function LoginPage() {
                               onChange={(e) => setEmail(e.target.value)}
                               placeholder="you@example.com"
                               required
+                              disabled={isEmailSent}
                               style={{ flex: 1, height: '48px', padding: '0 16px', border: 'none', background: 'transparent', fontSize: '15px', color: '#0A2540', outline: 'none', fontWeight: '500' }}
                             />
                           </div>
@@ -360,28 +334,24 @@ export default function LoginPage() {
                               onChange={(e) => setPassword(e.target.value)}
                               placeholder="••••••••"
                               required
+                              disabled={isEmailSent}
                               style={{ flex: 1, height: '48px', padding: '0 16px', border: 'none', background: 'transparent', fontSize: '15px', color: '#0A2540', outline: 'none', fontWeight: '500' }}
                             />
-                          </div>
-                          <div style={{ alignSelf: 'flex-end', marginTop: '4px', position: 'relative', zIndex: 50 }}>
-                            <Link href="/forgot-password" style={{ fontSize: '13px', color: '#635BFF', fontWeight: '600', textDecoration: 'none', display: 'inline-block' }} className="hover:underline">
-                              Forgot Password?
-                            </Link>
                           </div>
                         </div>
 
                         <button 
                           type="submit" 
-                          disabled={isSubmitting}
+                          disabled={isSubmitting || isEmailSent}
                           className="premium-btn"
-                          style={{ width: '100%', height: '48px', background: isSubmitting ? '#E6EBF1' : '#635BFF', color: isSubmitting ? '#8898AA' : 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '700', cursor: isSubmitting ? 'not-allowed' : 'pointer', marginTop: '8px' }}
+                          style={{ width: '100%', height: '48px', background: (isSubmitting || isEmailSent) ? '#E6EBF1' : '#635BFF', color: (isSubmitting || isEmailSent) ? '#8898AA' : 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '700', cursor: (isSubmitting || isEmailSent) ? 'not-allowed' : 'pointer', marginTop: '8px' }}
                         >
-                          {isSubmitting ? 'Signing in...' : 'Sign In'}
+                          {isSubmitting ? 'Creating account...' : 'Sign Up'}
                         </button>
                       </form>
 
                       <div className="text-center" style={{ marginTop: '24px' }}>
-                        <button type="button" onClick={() => { setAuthMethod('phone'); setErrorMsg(''); }} style={{ background: 'transparent', border: 'none', color: '#425466', fontWeight: '600', cursor: 'pointer', fontSize: '14px' }} className="hover:text-[#0A2540]">
+                        <button type="button" onClick={() => { setAuthMethod('phone'); setErrorMsg(''); setIsEmailSent(false); }} style={{ background: 'transparent', border: 'none', color: '#425466', fontWeight: '600', cursor: 'pointer', fontSize: '14px' }} className="hover:text-[#0A2540]">
                           Use Phone Number instead
                         </button>
                       </div>
@@ -477,7 +447,7 @@ export default function LoginPage() {
                           className="premium-btn"
                           style={{ width: '100%', height: '48px', background: isSubmitting ? '#E6EBF1' : '#635BFF', color: isSubmitting ? '#8898AA' : 'white', border: 'none', borderRadius: '12px', fontSize: '14px', fontWeight: '700', cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
                         >
-                          {isSubmitting ? 'Verifying...' : 'Verify & Login'}
+                          {isSubmitting ? 'Verifying...' : 'Verify & Sign Up'}
                         </button>
 
                         <div className="text-center">
@@ -500,7 +470,7 @@ export default function LoginPage() {
             <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', opacity: 0.8 }}>
               {step !== 'otp' && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '14px', color: '#425466', fontWeight: '500', position: 'relative', zIndex: 50 }}>
-                  <span>Don't have an account? <Link href="/signup" style={{ color: '#0A2540', textDecoration: 'none', fontWeight: '700', display: 'inline-block' }} className="hover:underline">Sign Up</Link></span>
+                  <span>Already have an account? <Link href="/login" style={{ color: '#0A2540', textDecoration: 'none', fontWeight: '700', display: 'inline-block' }} className="hover:underline">Log In</Link></span>
                 </div>
               )}
               

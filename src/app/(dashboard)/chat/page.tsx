@@ -88,9 +88,6 @@ export default function ChatPage() {
   const renderCustomCard = (message: ChatMessage) => {
     if (!message.responseType) return null
     
-    // For MVP, we render mock cards based on responseType to demonstrate the UI
-    // In production, the data would come from message.data parsed from Gemini
-    
     switch (message.responseType) {
       case 'document_analysis':
         return (
@@ -142,17 +139,75 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="flex flex-col h-full h-[calc(100vh-64px-72px)] md:h-screen">
-      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-surface-light">
+    <div className="chat-page-container" style={{
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @media (max-width: 768px) {
+          .chat-page-container {
+            height: calc(100vh - 72px) !important;
+          }
+        }
+        @media (min-width: 769px) {
+          .chat-page-container {
+            height: 100vh !important;
+          }
+        }
+      `}} />
+
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        padding: '24px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px',
+        backgroundColor: '#F8FAFC'
+      }}>
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-center p-4">
-            <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mb-4">
-              <span className="text-2xl">🤖</span>
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            textAlign: 'center',
+            padding: '48px 24px',
+            flex: 1
+          }}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              backgroundColor: '#F0EFFF',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: '20px',
+              fontSize: '28px',
+              boxShadow: '0 4px 12px rgba(99,91,255,0.1)'
+            }}>
+              🤖
             </div>
-            <h2 className="text-xl font-display font-semibold text-primary-light mb-2">
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '800',
+              color: '#0A2540',
+              marginBottom: '8px',
+              letterSpacing: '-0.5px'
+            }}>
               Sehat Saathi
             </h2>
-            <p className="text-text-secondary font-body max-w-sm">
+            <p style={{
+              color: '#425466',
+              fontSize: '15px',
+              lineHeight: '1.6',
+              maxWidth: '380px',
+              margin: 0
+            }}>
               Main aapka AI Health Assistant hoon. Report bhejein, dawai ke baare mein poochhein, ya yojana dhoondein.
             </p>
           </div>
@@ -169,7 +224,14 @@ export default function ChatPage() {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="bg-surface-card sticky bottom-0 border-t border-light">
+      <div style={{
+        backgroundColor: 'white',
+        position: 'sticky',
+        bottom: 0,
+        zIndex: 10,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
         {messages.length === 0 && <QuickChips onSelect={(text) => handleSendMessage(text)} />}
         <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
       </div>

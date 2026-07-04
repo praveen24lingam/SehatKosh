@@ -18,8 +18,7 @@ export function TreasuryCard({ savings, lastUpdated }: TreasuryCardProps) {
     const start = displayValue
     const end = savings
     if (start === end) return
-
-    setAnimating(true)
+    requestAnimationFrame(() => setAnimating(true))
 
     let startTime: number | null = null
     const duration = 1000

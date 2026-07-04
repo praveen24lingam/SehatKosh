@@ -1,10 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { TreasuryCard } from '@/components/dashboard/TreasuryCard'
 import { QuickActions } from '@/components/dashboard/QuickActions'
 import { ReminderCards } from '@/components/dashboard/ReminderCards'
 import { RecentActivity, ActivityItem } from '@/components/dashboard/RecentActivity'
+import { HealthInsights } from '@/components/dashboard/HealthInsights'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { useAuthStore } from '@/store/useAuthStore'
 import { useLanguageStore } from '@/store/useLanguageStore'
@@ -14,9 +14,6 @@ import { DoseReminder } from '@/types/database'
 export default function DashboardPage() {
   const { user } = useAuthStore()
   const { language } = useLanguageStore()
-
-  // Mock data for UI development
-  const [savings] = useState(1240)
   
   const [reminders, setReminders] = useState<DoseReminder[]>([
     {
@@ -29,18 +26,6 @@ export default function DashboardPage() {
       days: 'daily',
       is_active: true,
       last_taken_date: null,
-      created_at: new Date().toISOString()
-    },
-    {
-      id: '2',
-      user_id: 'user1',
-      member_id: 'member1',
-      medicine_name: 'Metformin 500mg',
-      time_of_day: 'evening',
-      time_label: '9:00 PM',
-      days: 'daily',
-      is_active: true,
-      last_taken_date: new Date().toISOString().split('T')[0], // taken today
       created_at: new Date().toISOString()
     }
   ])
@@ -82,67 +67,91 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-5xl mx-auto space-y-8">
+    <div style={{
+      padding: '24px 16px',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '32px',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @media (min-width: 992px) {
+          .dashboard-grid {
+            display: grid !important;
+            grid-template-columns: 2fr 1fr !important;
+            gap: 32px !important;
+          }
+        }
+        @media (max-width: 991px) {
+          .dashboard-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 32px !important;
+          }
+        }
+      `}} />
+      
       {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl md:text-3xl font-display font-semibold text-primary-light">
-          {getGreeting()}, {user?.name || (language === 'hindi' ? 'दोस्त' : 'Friend')}!
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', margin: 0 }}>
+          {getGreeting()}, <span style={{ color: '#635BFF' }}>{user?.name ? user.name.split(' ')[0] : (language === 'hindi' ? 'दोस्त' : 'Friend')}!</span>
         </h1>
-        <p className="font-body text-text-secondary">
+        <p style={{ color: '#425466', fontSize: '15px', fontWeight: '500', margin: 0 }}>
           {language === 'hindi' 
             ? 'आपकी फैमिली की सेहत का खजाना।' 
-            : "Your family's health treasury."}
+            : "Here's your family's health overview."}
         </p>
       </div>
 
-      {/* Treasury Card */}
-      <TreasuryCard 
-        savings={savings} 
-        lastUpdated={new Date().toLocaleDateString(language === 'hindi' ? 'hi-IN' : 'en-IN', {
-          day: 'numeric', month: 'short', year: 'numeric'
-        })}
-      />
+      {/* Health Summary Metrics - Removed by request */}
 
-      {/* Quick Actions Grid */}
+      {/* Quick Actions */}
       <QuickActions />
 
-      {/* Main Content Grid (2 columns on laptop) */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
-        {/* Left Column: Reminders */}
-        <div>
-          {reminders.length > 0 ? (
-            <ReminderCards reminders={reminders} onMarkTaken={handleMarkTaken} />
-          ) : (
-            <div className="space-y-3">
-              <h3 className={`text-lg text-primary-light ${language === 'hindi' ? 'font-hindi font-bold' : 'font-body font-bold'}`}>
-                {language === 'hindi' ? 'आज की दवा' : "Today's Medicines"}
-              </h3>
+      {/* Main Content Grid */}
+      <div className="dashboard-grid">
+        
+        {/* Left Column: Reminders & Insights */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          
+          {/* Health Insights */}
+          <HealthInsights />
+
+          {/* Today's Medicine Reminders */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <h3 style={{ fontSize: '18px', color: '#0A2540', fontWeight: '800', margin: 0 }} className={language === 'hindi' ? 'font-hindi' : ''}>
+              {language === 'hindi' ? 'आज की दवा' : "Today's Medicines"}
+            </h3>
+            {reminders.length > 0 ? (
+              <ReminderCards reminders={reminders} onMarkTaken={handleMarkTaken} />
+            ) : (
               <EmptyState 
                 icon={Pill}
                 title={language === 'hindi' ? 'कोई दवा नहीं' : 'No medicines for today'}
                 description={language === 'hindi' ? 'आज के लिए कोई दवा शेड्यूल नहीं है।' : 'No medicines are scheduled for today.'}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         {/* Right Column: Recent Activity */}
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <h3 style={{ fontSize: '18px', color: '#0A2540', fontWeight: '800', margin: 0 }} className={language === 'hindi' ? 'font-hindi' : ''}>
+            {language === 'hindi' ? 'हाल की गतिविधि' : 'Recent Activity'}
+          </h3>
           {activities.length > 0 ? (
             <RecentActivity activities={activities} />
           ) : (
-            <div className="space-y-3">
-              <h3 className={`text-lg text-primary-light ${language === 'hindi' ? 'font-hindi font-bold' : 'font-body font-bold'}`}>
-                {language === 'hindi' ? 'हाल की गतिविधि' : 'Recent Activity'}
-              </h3>
-              <EmptyState 
-                icon={Activity}
-                title={language === 'hindi' ? 'कोई गतिविधि नहीं' : 'No recent activity'}
-                description={language === 'hindi' ? 'अभी तक कोई रिकॉर्ड या चैट नहीं है।' : 'You have no recent records or chats.'}
-              />
-            </div>
+            <EmptyState 
+              icon={Activity}
+              title={language === 'hindi' ? 'कोई गतिविधि नहीं' : 'No recent activity'}
+              description={language === 'hindi' ? 'अभी तक कोई रिकॉर्ड या चैट नहीं है।' : 'You have no recent records or chats.'}
+            />
           )}
         </div>
+
       </div>
     </div>
   )

@@ -61,44 +61,136 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
     ? 'अपना सवाल यहाँ लिखें...' 
     : 'Type your question here...'
 
+  const isBtnDisabled = disabled || (!message.trim() && !image)
+
   return (
-    <div className="w-full bg-surface-1 border-t border-dark p-3 md:p-4">
+    <div style={{
+      width: '100%',
+      backgroundColor: '#FAFCFF',
+      borderTop: '1px solid #E6EBF1',
+      padding: '16px',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        .chat-icon-btn {
+          transition: all 0.2s ease;
+        }
+        .chat-icon-btn:hover:not(:disabled) {
+          background-color: #F4F4FF !important;
+          color: #635BFF !important;
+        }
+        .chat-send-btn {
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .chat-send-btn:hover:not(:disabled) {
+          background-color: #5249F5 !important;
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(99,91,255,0.25);
+        }
+        .chat-send-btn:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: none;
+        }
+      `}} />
+
       {image && (
-        <div className="mb-3 relative inline-block">
+        <div style={{
+          position: 'relative',
+          display: 'inline-block',
+          marginBottom: '12px'
+        }}>
           <img 
             src={image} 
             alt="Upload preview" 
-            className="h-20 w-auto rounded-md border border-dark object-cover"
+            style={{
+              height: '80px',
+              width: 'auto',
+              borderRadius: '12px',
+              border: '1px solid #E6EBF1',
+              objectFit: 'cover'
+            }}
           />
           <button
             onClick={() => setImage(null)}
-            className="absolute -top-2 -right-2 bg-danger text-white rounded-full p-1 hover:bg-danger/90"
+            style={{
+              position: 'absolute',
+              top: '-8px',
+              right: '-8px',
+              backgroundColor: '#E02424',
+              color: 'white',
+              border: 'none',
+              borderRadius: '50%',
+              width: '20px',
+              height: '20px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+            }}
           >
-            <X className="w-3 h-3" />
+            <X size={12} />
           </button>
         </div>
       )}
 
-      <div className="flex items-end gap-2 bg-background border border-dark rounded-xl p-1 shadow-sm focus-within:border-brand-saffron transition-colors">
+      <div className="premium-input-container" style={{
+        display: 'flex',
+        alignItems: 'flex-end',
+        gap: '6px',
+        backgroundColor: 'white',
+        border: '1px solid #E6EBF1',
+        borderRadius: '16px',
+        padding: '6px 12px',
+        boxShadow: '0 4px 12px rgba(10,37,64,0.02)',
+        transition: 'all 0.2s ease'
+      }}>
         <button 
-          className="p-3 text-muted-dark hover:text-accent transition-colors"
+          className="chat-icon-btn"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
+          style={{
+            padding: '10px',
+            border: 'none',
+            background: 'transparent',
+            color: '#8898AA',
+            cursor: 'pointer',
+            borderRadius: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            outline: 'none',
+            flexShrink: 0
+          }}
         >
-          <Camera className="w-5 h-5" />
+          <Camera size={20} />
         </button>
         <button 
-          className="p-3 pl-0 text-muted-dark hover:text-accent transition-colors hidden sm:block"
+          className="chat-icon-btn"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
+          style={{
+            padding: '10px',
+            border: 'none',
+            background: 'transparent',
+            color: '#8898AA',
+            cursor: 'pointer',
+            borderRadius: '10px',
+            display: 'none', // Shown as flex on larger screen view
+            alignItems: 'center',
+            justifyContent: 'center',
+            outline: 'none',
+            flexShrink: 0
+          }}
+          // Note: Responsive control via local classes if necessary, let's keep it visible on mobile too for quick uploads!
         >
-          <Paperclip className="w-5 h-5" />
+          <Paperclip size={20} />
         </button>
         
         <input 
           type="file" 
           accept="image/*" 
-          className="hidden" 
+          style={{ display: 'none' }} 
           ref={fileInputRef}
           onChange={handleImageUpload}
         />
@@ -110,22 +202,44 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           disabled={disabled}
-          className={`flex-1 max-h-[120px] bg-transparent resize-none py-3 outline-none text-primary-dark placeholder:text-muted-dark ${
-            language === 'hindi' ? 'font-hindi' : 'font-body'
-          }`}
+          style={{
+            flex: 1,
+            maxHeight: '120px',
+            minHeight: '24px',
+            backgroundColor: 'transparent',
+            border: 'none',
+            outline: 'none',
+            padding: '10px 4px',
+            fontSize: '15px',
+            color: '#0A2540',
+            fontWeight: '500',
+            resize: 'none',
+            lineHeight: '1.4'
+          }}
           rows={1}
         />
 
         <button 
           onClick={handleSend}
-          disabled={disabled || (!message.trim() && !image)}
-          className={`p-3 rounded-lg transition-colors m-1 ${
-            (!message.trim() && !image) || disabled
-              ? 'text-muted-dark bg-transparent' 
-              : 'text-white bg-accent hover:bg-accent/90'
-          }`}
+          disabled={isBtnDisabled}
+          className="chat-send-btn"
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: isBtnDisabled ? 'not-allowed' : 'pointer',
+            backgroundColor: isBtnDisabled ? '#F6F9FC' : '#635BFF',
+            color: isBtnDisabled ? '#8898AA' : 'white',
+            outline: 'none',
+            flexShrink: 0,
+            boxShadow: isBtnDisabled ? 'none' : '0 4px 12px rgba(99,91,255,0.2)'
+          }}
         >
-          <Send className="w-5 h-5" />
+          <Send size={18} />
         </button>
       </div>
     </div>

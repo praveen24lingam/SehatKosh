@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, MessageCircle, Users, Settings } from 'lucide-react'
+import { Home, MessageCircle, Users, Bell, Settings } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
 
 export function BottomNav() {
@@ -10,55 +10,75 @@ export function BottomNav() {
   const { language } = useLanguageStore()
 
   const navItems = [
-    { href: '/dashboard', icon: Home,          labelEn: 'Home',    labelHi: 'होम' },
-    { href: '/chat',      icon: MessageCircle, labelEn: 'Chat',    labelHi: 'चैट', isPrimary: true },
-    { href: '/family',    icon: Users,         labelEn: 'Family',  labelHi: 'परिवार' },
-    { href: '/settings',  icon: Settings,      labelEn: 'Settings',labelHi: 'सेटिंग्स' },
+    { href: '/dashboard', icon: Home,          labelEn: 'Home',      labelHi: 'होम' },
+    { href: '/chat',      icon: MessageCircle, labelEn: 'Chat',      labelHi: 'चैट' },
+    { href: '/family',    icon: Users,         labelEn: 'Family',    labelHi: 'परिवार' },
+    { href: '/reminders', icon: Bell,          labelEn: 'Alerts',    labelHi: 'अलर्ट' },
+    { href: '/settings',  icon: Settings,      labelEn: 'Settings',  labelHi: 'सेटिंग्स' },
   ]
 
   return (
-    <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 h-[72px] border-t border-white/[0.08] z-50 flex items-center justify-around px-2"
-      style={{ background: 'rgba(10,37,64,0.97)', backdropFilter: 'blur(16px)' }}
-    >
-      {navItems.map((item) => {
-        const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
-        const Icon = item.icon
+    <nav className="mobile-only" style={{
+      position: 'fixed',
+      bottom: '16px',
+      left: '16px',
+      right: '16px',
+      backgroundColor: 'rgba(255, 255, 255, 0.85)',
+      backdropFilter: 'blur(20px)',
+      border: '1px solid rgba(10, 37, 64, 0.06)',
+      borderRadius: '20px',
+      zIndex: 50,
+      boxShadow: '0 12px 32px rgba(10, 37, 64, 0.08)',
+      paddingBottom: '0px',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '6px' }}>
+        {navItems.map((item) => {
+          const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+          const Icon = item.icon
 
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={`flex flex-col items-center justify-center w-16 h-full gap-1 transition-colors ${
-              item.isPrimary ? '-mt-6' : ''
-            }`}
-          >
-            {item.isPrimary ? (
-              <div className="w-12 h-12 rounded-full bg-stripe-purple flex items-center justify-center shadow-[0_4px_16px_rgba(99,91,255,0.4)] mb-1">
-                <Icon className="w-6 h-6 text-white" />
-              </div>
-            ) : (
-              <Icon
-                className={`w-6 h-6 ${isActive ? 'text-stripe-purple' : 'text-stripe-light-muted'}`}
-              />
-            )}
-
-            <span
-              className={`text-[10px] text-center font-medium ${
-                language === 'hindi' ? 'font-hindi' : 'font-body'
-              } ${
-                item.isPrimary
-                  ? 'text-stripe-purple'
-                  : isActive
-                    ? 'text-stripe-purple'
-                    : 'text-stripe-light-muted'
-              }`}
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '6px 10px',
+                minWidth: '56px',
+                textDecoration: 'none',
+                color: isActive ? '#635BFF' : '#8898AA',
+                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
+                cursor: 'pointer'
+              }}
             >
-              {language === 'hindi' ? item.labelHi : item.labelEn}
-            </span>
-          </Link>
-        )
-      })}
+              <div style={{
+                position: 'relative',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '32px',
+                height: '32px',
+                borderRadius: '8px',
+                marginBottom: '2px',
+                backgroundColor: isActive ? '#F4F4FF' : 'transparent',
+                transition: 'all 0.25s ease'
+              }}>
+                <Icon size={18} style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', color: isActive ? '#635BFF' : '#8898AA' }} />
+              </div>
+              <span style={{
+                fontSize: '9px',
+                fontWeight: isActive ? '800' : '500',
+                lineHeight: '1.2'
+              }} className={language === 'hindi' ? 'font-hindi' : ''}>
+                {language === 'hindi' ? item.labelHi : item.labelEn}
+              </span>
+            </Link>
+          )
+        })}
+      </div>
     </nav>
   )
 }

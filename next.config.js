@@ -8,16 +8,7 @@ const withPWA = require('next-pwa')({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Any other next config options here
-  experimental: {
-    turbopack: {
-      root: __dirname,
-<<<<<<< HEAD
-    },
-  },
-=======
-    }
-  }
->>>>>>> 8d2d8951c19ab2e8168f26f39e8d2da0b6bb60a5
+  turbopack: {},
 }
 
 module.exports = withPWA(nextConfig)

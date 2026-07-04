@@ -22,14 +22,54 @@ export function QuickChips({ onSelect }: QuickChipsProps) {
   ]
 
   return (
-    <div className="flex overflow-x-auto hide-scrollbar gap-2 px-4 py-2 mb-2 w-full">
+    <div 
+      className="hide-scrollbar"
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        overflowX: 'auto',
+        padding: '12px 16px 4px',
+        width: '100%',
+        fontFamily: 'Inter, sans-serif'
+      }}
+    >
+      <style dangerouslySetInnerHTML={{__html: `
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .quick-chip-btn {
+          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .quick-chip-btn:hover {
+          border-color: #635BFF !important;
+          color: #635BFF !important;
+          background-color: #F4F4FF !important;
+          transform: translateY(-1px);
+        }
+      `}} />
+      
       {chips.map((chip, idx) => (
         <button
           key={idx}
           onClick={() => onSelect(chip)}
-          className={`whitespace-nowrap px-4 py-2 rounded-full border border-light bg-surface-card text-sm transition-colors hover:border-brand-saffron hover:text-accent ${
-            language === 'hindi' ? 'font-hindi' : 'font-body'
-          }`}
+          className="quick-chip-btn"
+          style={{
+            whiteSpace: 'nowrap',
+            padding: '8px 16px',
+            borderRadius: '999px',
+            border: '1px solid #E6EBF1',
+            backgroundColor: 'white',
+            color: '#425466',
+            fontSize: '13px',
+            fontWeight: '600',
+            cursor: 'pointer',
+            outline: 'none'
+          }}
         >
           {chip}
         </button>

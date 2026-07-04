@@ -9,13 +9,42 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-screen bg-stripe-offwhite">
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#EAEFF5', fontFamily: 'Inter, sans-serif' }}>
+      
+      <style dangerouslySetInnerHTML={{__html: `
+        @media (max-width: 768px) {
+          .desktop-only { display: none !important; }
+          .desktop-flex { display: none !important; }
+          .mobile-only { display: block !important; }
+          .mobile-flex { display: flex !important; }
+          .main-content { padding-bottom: 72px !important; }
+        }
+        @media (min-width: 769px) {
+          .desktop-only { display: block !important; }
+          .desktop-flex { display: flex !important; }
+          .mobile-only { display: none !important; }
+          .mobile-flex { display: none !important; }
+          .main-content { padding-bottom: 0px !important; }
+        }
+      `}} />
+
       <Sidebar />
 
-      <main className="flex-1 flex flex-col min-w-0 pb-[72px] md:pb-0">
-        <OfflineBanner />
-        <TopHeader />
-        <div className="flex-1 overflow-x-hidden">{children}</div>
+      <main className="main-content" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative', overflow: 'hidden' }}>
+        {/* Stripe Light Background Pattern */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: '100%', zIndex: 0,
+          backgroundSize: '100px 100px',
+          backgroundImage: 'linear-gradient(to right, rgba(0,0,0,0.02) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.02) 1px, transparent 1px)',
+          pointerEvents: 'none'
+        }}></div>
+
+        <div style={{ position: 'relative', zIndex: 10, display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
+          <OfflineBanner />
+          <TopHeader />
+          <div style={{ flex: 1, overflowX: 'hidden', overflowY: 'auto' }}>{children}</div>
+        </div>
+        
         <BottomNav />
       </main>
     </div>

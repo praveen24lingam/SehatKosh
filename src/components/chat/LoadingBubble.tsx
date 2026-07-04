@@ -4,37 +4,81 @@ import { Bot } from 'lucide-react'
 
 export function LoadingBubble() {
   return (
-    <div className="flex justify-start mb-6">
-      <div className="max-w-[90%] sm:max-w-[85%] w-full flex flex-col gap-1">
-        <div 
-          className="p-4 shadow-sm"
-          style={{
-            background: '#FEFEFE',
-            borderTop: '2px solid var(--brand-saffron)',
-            borderRadius: '0 0 12px 12px',
-          }}
-        >
+    <div style={{
+      display: 'flex',
+      justifyContent: 'flex-start',
+      marginBottom: '24px',
+      width: '100%',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes chatBounce {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-6px); }
+        }
+        .chat-loading-dot {
+          width: 8px;
+          height: 8px;
+          background-color: #635BFF;
+          border-radius: 50%;
+          display: inline-block;
+          animation: chatBounce 1.2s infinite ease-in-out;
+        }
+        .chat-dot-1 { animation-delay: -0.3s; }
+        .chat-dot-2 { animation-delay: -0.15s; }
+      `}} />
+
+      <div style={{
+        maxWidth: '85%',
+        width: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '4px'
+      }}>
+        <div style={{
+          background: 'white',
+          border: '1px solid rgba(10,37,64,0.06)',
+          borderTop: '3px solid #00D4FF',
+          borderRadius: '0 0 16px 16px',
+          padding: '20px',
+          boxShadow: '0 4px 12px rgba(10,37,64,0.02)'
+        }}>
           {/* Header area */}
-          <div 
-            className="flex items-center gap-2 mb-3"
-            style={{
-              paddingBottom: '8px',
-              borderBottom: '1px solid var(--border)',
-            }}
-          >
-            <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center">
-              <Bot className="w-5 h-5 text-accent" />
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #E6EBF1',
+            marginBottom: '16px'
+          }}>
+            <div style={{
+              width: '30px',
+              height: '30px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              boxShadow: '0 2px 6px rgba(99,91,255,0.15)'
+            }}>
+              <Bot size={16} />
             </div>
-            <span className="font-body font-semibold text-primary-light">
+            <span style={{
+              fontWeight: '700',
+              fontSize: '14px',
+              color: '#0A2540'
+            }}>
               Sehat Saathi
             </span>
           </div>
           
           {/* Animated loading dots */}
-          <div className="flex space-x-1.5 p-2">
-            <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
-            <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
-            <div className="w-2 h-2 bg-accent/40 rounded-full animate-bounce"></div>
+          <div style={{ display: 'flex', gap: '6px', padding: '8px 4px' }}>
+            <div className="chat-loading-dot chat-dot-1" />
+            <div className="chat-loading-dot chat-dot-2" />
+            <div className="chat-loading-dot" />
           </div>
         </div>
       </div>

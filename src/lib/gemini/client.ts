@@ -10,9 +10,9 @@ if (!apiKey) {
 export const genAI = new GoogleGenerativeAI(apiKey || 'dummy-key')
 
 // Models
-// Use gemini-1.5-flash for faster responses
-export const chatModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+// Use gemini-3.5-flash for faster responses
+export const chatModel = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' })
 
-// Use gemini-1.5-pro for complex document analysis if needed, 
+// Use gemini-3.5-flash for complex document analysis if needed, 
 // though flash is usually good enough and much faster.
-export const visionModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+export const visionModel = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' })

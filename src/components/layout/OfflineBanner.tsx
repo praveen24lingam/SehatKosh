@@ -10,7 +10,7 @@ export function OfflineBanner() {
 
   useEffect(() => {
     // Check initial state
-    setIsOffline(!navigator.onLine)
+    setTimeout(() => setIsOffline(!navigator.onLine), 0)
 
     // Listen to network changes
     const handleOnline = () => setIsOffline(false)

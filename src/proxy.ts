@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-const PUBLIC_ROUTES = ['/', '/language', '/login', '/onboarding']
+const PUBLIC_ROUTES = ['/', '/language', '/login', '/signup', '/forgot-password', '/onboarding']
 const PUBLIC_PATTERN = /^\/health-card\/.+/
 
 export async function proxy(request: NextRequest) {
