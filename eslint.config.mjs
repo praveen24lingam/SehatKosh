@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // CommonJS config / throwaway scripts that legitimately use require()
+    "next.config.js",
+    "list-models.js",
   ]),
 ]);
 

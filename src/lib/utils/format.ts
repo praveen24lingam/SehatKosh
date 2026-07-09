@@ -1,5 +1,3 @@
-import { format } from 'date-fns'
-
 /**
  * Format currency in Indian Rupees
  * e.g. 1240 -> ₹1,240
@@ -18,5 +16,9 @@ export function formatCurrency(amount: number): string {
  */
 export function formatDate(date: Date | string): string {
   const parsedDate = typeof date === 'string' ? new Date(date) : date
-  return format(parsedDate, 'dd MMM yyyy')
+  return new Intl.DateTimeFormat('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric'
+  }).format(parsedDate)
 }

@@ -12,18 +12,51 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon: Icon, title, description, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center rounded-xl border border-dashed border-light bg-surface-light/50">
-      <div className="w-12 h-12 rounded-full bg-surface-card border border-light flex items-center justify-center mb-4 text-muted-light">
-        <Icon className="w-6 h-6" />
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '48px 32px',
+      textAlign: 'center',
+      borderRadius: '24px',
+      backgroundColor: '#FAFCFF',
+      border: '1px dashed rgba(10, 37, 64, 0.12)',
+      boxShadow: '0 4px 20px rgba(10,37,64,0.02)',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      <div style={{
+        width: '64px',
+        height: '64px',
+        borderRadius: '50%',
+        background: 'linear-gradient(135deg, rgba(99,91,255,0.08) 0%, rgba(0,212,255,0.04) 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: '20px',
+        boxShadow: '0 4px 12px rgba(99,91,255,0.05)'
+      }}>
+        <Icon size={28} strokeWidth={2} style={{ color: '#635BFF' }} />
       </div>
-      <h4 className="text-base font-semibold font-body text-primary-light mb-1">
+      <h4 style={{
+        fontSize: '18px',
+        fontWeight: '700',
+        color: '#0A2540',
+        marginBottom: '8px'
+      }}>
         {title}
       </h4>
-      <p className="text-sm font-body text-text-secondary mb-4 max-w-sm">
+      <p style={{
+        fontSize: '14px',
+        color: '#425466',
+        marginBottom: '24px',
+        maxWidth: '320px',
+        lineHeight: '1.5'
+      }}>
         {description}
       </p>
       {action && (
-        <div>{action}</div>
+        <div style={{ marginTop: '8px' }}>{action}</div>
       )}
     </div>
   )

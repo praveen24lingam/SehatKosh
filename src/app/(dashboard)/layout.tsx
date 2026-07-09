@@ -2,6 +2,7 @@ import { Sidebar } from '@/components/layout/Sidebar'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { TopHeader } from '@/components/layout/TopHeader'
 import { OfflineBanner } from '@/components/layout/OfflineBanner'
+import { FloatingAIButton } from '@/components/layout/FloatingAIButton'
 
 export default function DashboardLayout({
   children,
@@ -45,6 +46,7 @@ export default function DashboardLayout({
           <div style={{ flex: 1, overflowX: 'hidden', overflowY: 'auto' }}>{children}</div>
         </div>
         
+        <FloatingAIButton />
         <BottomNav />
       </main>
     </div>

@@ -14,56 +14,43 @@ export function QuickActions() {
       labelHi: 'एआई असिस्टेंट', 
       labelEn: 'AI Assistant',
       color: '#635BFF',
-      shadowGlow: '0 8px 20px rgba(99,91,255,0.25)',
-      bgGradient: 'linear-gradient(135deg, rgba(122,115,255,0.12) 0%, rgba(0,212,255,0.04) 100%)'
+      gradient: 'linear-gradient(135deg, #7A73FF 0%, #635BFF 100%)',
+      shadow: 'rgba(99,91,255,0.3)'
     },
     { 
-      href: '#', 
-      icon: Calendar, 
-      labelHi: 'अपॉइंटमेंट', 
-      labelEn: 'Book Appt',
-      color: '#00D4FF',
-      shadowGlow: '0 8px 20px rgba(0,212,255,0.25)',
-      bgGradient: 'linear-gradient(135deg, rgba(0,212,255,0.12) 0%, rgba(0,212,255,0.04) 100%)'
-    },
-    { 
-      href: '/chat?action=upload', 
-      icon: FileUp, 
-      labelHi: 'रिपोर्ट अपलोड', 
-      labelEn: 'Upload Reports',
-      color: '#FF9900',
-      shadowGlow: '0 8px 20px rgba(255,153,0,0.25)',
-      bgGradient: 'linear-gradient(135deg, rgba(255,153,0,0.12) 0%, rgba(255,153,0,0.04) 100%)'
-    },
-    { 
-      href: '#', 
+      href: '/reminders', 
       icon: Pill, 
-      labelHi: 'प्रिस्क्रिप्शन', 
-      labelEn: 'Prescriptions',
-      color: '#00D924',
-      shadowGlow: '0 8px 20px rgba(0,217,36,0.25)',
-      bgGradient: 'linear-gradient(135deg, rgba(0, 217, 36, 0.12) 0%, rgba(0, 217, 36, 0.04) 100%)'
+      labelHi: 'रिमाइंडर', 
+      labelEn: 'Reminders',
+      color: '#00D4FF',
+      gradient: 'linear-gradient(135deg, #00D4FF 0%, #00B3E6 100%)',
+      shadow: 'rgba(0,212,255,0.3)'
     },
     { 
-      href: '#', 
+      href: '/family', 
+      icon: FileUp, 
+      labelHi: 'परिवार के रिकॉर्ड', 
+      labelEn: 'Family Records',
+      color: '#FF9900',
+      gradient: 'linear-gradient(135deg, #FF9900 0%, #E68A00 100%)',
+      shadow: 'rgba(255,153,0,0.3)'
+    },
+    { 
+      href: 'tel:102', 
       icon: PhoneCall, 
       labelHi: 'इमरजेंसी', 
       labelEn: 'Emergency',
       color: '#E02424',
-      shadowGlow: '0 8px 20px rgba(224,36,36,0.25)',
-      bgGradient: 'linear-gradient(135deg, rgba(224, 36, 36, 0.12) 0%, rgba(224, 36, 36, 0.04) 100%)'
+      gradient: 'linear-gradient(135deg, #FF4D4D 0%, #E02424 100%)',
+      shadow: 'rgba(224,36,36,0.3)'
     },
   ]
 
   return (
     <div style={{
-      backgroundColor: 'white',
-      borderRadius: '24px',
-      padding: '24px',
-      border: '1px solid rgba(10, 37, 64, 0.06)',
-      boxShadow: '0 8px 24px rgba(10, 37, 64, 0.02)',
       width: '100%',
-      fontFamily: 'Inter, sans-serif'
+      fontFamily: 'Inter, sans-serif',
+      position: 'relative'
     }}>
       <style dangerouslySetInnerHTML={{__html: `
         .hide-scrollbar::-webkit-scrollbar {
@@ -73,76 +60,97 @@ export function QuickActions() {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        .action-card {
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        .qa-card {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+          background: white;
+          border-radius: 20px;
+          border: 1px solid rgba(10, 37, 64, 0.05);
+          box-shadow: 0 4px 12px rgba(10, 37, 64, 0.03);
+          padding: 16px 12px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 12px;
+          text-decoration: none;
+          min-width: 110px;
+          position: relative;
+          overflow: hidden;
         }
-        .action-icon-box {
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        .qa-card::before {
+          content: '';
+          position: absolute;
+          top: 0; left: 0; right: 0; height: 3px;
+          background: var(--qa-gradient);
+          opacity: 0;
+          transition: opacity 0.3s ease;
         }
-        .action-card:hover .action-icon-box {
-          transform: translateY(-4px) scale(1.04);
-          box-shadow: var(--shadow-glow) !important;
-          border-color: var(--color-accent) !important;
+        .qa-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 16px 32px var(--qa-shadow) !important;
+          border-color: transparent !important;
         }
-        .action-card:hover span {
-          color: #0A2540 !important;
+        .qa-card:hover::before {
+          opacity: 1;
+        }
+        .qa-icon-wrapper {
+          width: 56px;
+          height: 56px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          justifyContent: center;
+          background: var(--qa-gradient);
+          color: white;
+          box-shadow: 0 6px 16px var(--qa-shadow);
+          transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .qa-card:hover .qa-icon-wrapper {
+          transform: scale(1.1);
+        }
+        .qa-text {
+          font-size: 14px;
+          font-weight: 700;
+          text-align: center;
+          color: #425466;
+          transition: color 0.3s ease;
+        }
+        .qa-card:hover .qa-text {
+          color: #0A2540;
+        }
+        .qa-grid {
+          display: grid;
+          gap: 16px;
+          width: 100%;
+        }
+        @media (max-width: 599px) {
+          .qa-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+        }
+        @media (min-width: 600px) {
+          .qa-grid {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          }
         }
       `}} />
 
-      <div 
-        className="hide-scrollbar"
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-around',
-          gap: '16px',
-          overflowX: 'auto',
-          width: '100%'
-        }}
-      >
+      <div className="qa-grid">
         {actions.map((action, idx) => {
           const Icon = action.icon
           return (
             <Link 
               key={idx} 
               href={action.href}
-              className="action-card"
+              className="qa-card"
               style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '10px',
-                textDecoration: 'none',
-                cursor: 'pointer',
-                flexShrink: 0,
-                width: '90px',
-                '--shadow-glow': action.shadowGlow,
-                '--color-accent': action.color
+                '--qa-gradient': action.gradient,
+                '--qa-shadow': action.shadow,
               } as React.CSSProperties}
             >
-              <div 
-                className="action-icon-box"
-                style={{
-                  width: '60px',
-                  height: '60px',
-                  borderRadius: '18px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: action.bgGradient,
-                  border: '1px solid rgba(10, 37, 64, 0.05)',
-                  boxShadow: 'none'
-                }}
-              >
-                <Icon size={24} style={{ color: action.color }} strokeWidth={2.2} />
+              <div className="qa-icon-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Icon size={28} strokeWidth={2.5} />
               </div>
-              <span style={{
-                fontSize: '12px',
-                fontWeight: '700',
-                textAlign: 'center',
-                color: '#637381',
-                transition: 'color 0.2s'
-              }} className={language === 'hindi' ? 'font-hindi' : ''}>
+              <span className={`qa-text ${language === 'hindi' ? 'font-hindi' : ''}`}>
                 {language === 'hindi' ? action.labelHi : action.labelEn}
               </span>
             </Link>

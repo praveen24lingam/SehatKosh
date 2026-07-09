@@ -50,26 +50,46 @@ export function HealthInsights() {
         zIndex: 10
       }}>
         <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '6px',
-            padding: '6px 12px',
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(255, 255, 255, 0.15)',
-            borderRadius: '999px',
-            alignSelf: 'flex-start'
-          }}>
-            <Sparkles size={14} style={{ color: '#00D4FF' }} />
-            <span style={{
-              fontSize: '11px',
-              fontWeight: '700',
-              color: 'white',
-              letterSpacing: '1px',
-              textTransform: 'uppercase'
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              backgroundColor: 'rgba(255, 255, 255, 0.08)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '999px',
             }}>
-              {language === 'hindi' ? 'एआई हेल्थ इनसाइट्स' : 'AI Health Insights'}
-            </span>
+              <Sparkles size={14} style={{ color: '#00D4FF' }} />
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                color: 'white',
+                letterSpacing: '1px',
+                textTransform: 'uppercase'
+              }}>
+                {language === 'hindi' ? 'एआई हेल्थ इनसाइट्स' : 'AI Health Insights'}
+              </span>
+            </div>
+            
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              padding: '6px 12px',
+              backgroundColor: 'rgba(0, 217, 36, 0.1)',
+              border: '1px solid rgba(0, 217, 36, 0.2)',
+              borderRadius: '999px',
+            }}>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: '700',
+                color: '#00D924',
+                letterSpacing: '1px',
+                textTransform: 'uppercase'
+              }}>
+                {language === 'hindi' ? 'जोखिम स्तर: कम' : 'Risk Level: Low'}
+              </span>
+            </div>
           </div>
           
           <h2 style={{
@@ -81,8 +101,8 @@ export function HealthInsights() {
             letterSpacing: '-0.3px'
           }}>
             {language === 'hindi'
-              ? 'आपकी सेहत के लिए आज का सुझाव'
-              : 'Your personalized health tip for today'}
+              ? 'आपकी सेहत स्थिर है। आज का सुझाव:'
+              : 'Your health is stable. Today\'s Recommendation:'}
           </h2>
           
           <p style={{
@@ -94,12 +114,13 @@ export function HealthInsights() {
             fontWeight: '400'
           }}>
             {language === 'hindi'
-              ? 'आपकी पिछली रिपोर्ट के अनुसार, आज कम से कम 2.5 लीटर पानी पीने की कोशिश करें। इससे आपको ऊर्जा मिलेगी।'
-              : "Based on your recent reports, try to drink at least 2.5L of water today to keep your energy levels up and support digestion."}
+              ? 'नियमित रूप से अपनी दवाइयाँ लेते रहें। आपके सभी रिकॉर्ड्स सामान्य दिख रहे हैं। अधिक सटीक सुझावों के लिए अपनी दैनिक गतिविधियों को लॉग करना जारी रखें।'
+              : "Keep taking your medications regularly. Your records appear normal. Continue logging your daily activities for more precise recommendations."}
           </p>
         </div>
         
         <button 
+          onClick={() => window.location.href = '/chat'}
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -120,8 +141,8 @@ export function HealthInsights() {
           }}
           className="premium-btn"
         >
-          {language === 'hindi' ? 'और सुझाव देखें' : 'View all insights'}
-          <ArrowRight size={16} />
+          <Sparkles size={16} />
+          {language === 'hindi' ? 'एआई से पूछें' : 'Ask AI about this'}
         </button>
       </div>
     </div>

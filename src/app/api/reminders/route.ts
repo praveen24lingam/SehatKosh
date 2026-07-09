@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
     const cookieStore = await cookies();
     const supabase = createServerClient(
@@ -18,10 +18,7 @@ export async function GET(request: Request) {
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { searchParams } = new URL(request.url)
-    const date = searchParams.get('date') // e.g. 'today'
-    
-    // For now, we fetch all active reminders for the user
+    // Fetch all active reminders for the user
     const { data, error } = await supabase
       .from('dose_reminders')
       .select('*')
@@ -32,8 +29,9 @@ export async function GET(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ reminders: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }
 
@@ -72,7 +70,8 @@ export async function POST(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ reminder: data })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ error: message }, { status: 500 })
   }
 }

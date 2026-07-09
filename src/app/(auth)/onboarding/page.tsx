@@ -44,7 +44,7 @@ export default function OnboardingPage() {
     primaryGoal: ''
   })
 
-  const updateData = (field: string, value: any) => {
+  const updateData = (field: string, value: string | string[]) => {
     setFormData(prev => ({ ...prev, [field]: value }))
   }
 
@@ -71,7 +71,7 @@ export default function OnboardingPage() {
     try {
       const supabase = createClient()
       
-      const { error } = await supabase.auth.updateUser({
+      const { data: userData, error } = await supabase.auth.updateUser({
         data: { 
           full_name: formData.name,
           onboarding_data: formData 
@@ -80,13 +80,24 @@ export default function OnboardingPage() {
 
       if (error) throw error
 
+      if (userData?.user) {
+        // Safety net: ensure user exists in public.users table
+        const { error: insertError } = await supabase.from('users').insert({
+          id: userData.user.id,
+          email: userData.user.email,
+        })
+        if (insertError && insertError.code !== '23505') {
+          console.error("Failed to insert user into users table", insertError)
+        }
+      }
+
       if (user) {
         setUser({ ...user, name: formData.name })
       }
       router.push('/dashboard')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Failed to update profile:', error)
-      setErrorMsg(error.message || 'Failed to save your profile. Please try again.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Failed to save your profile. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -135,7 +146,14 @@ export default function OnboardingPage() {
   })
 
   // Select Option Style
-  const OptionCard = ({ selected, onClick, icon: Icon, title, desc }: any) => (
+  interface OptionCardProps {
+    selected: boolean
+    onClick: () => void
+    icon: React.ElementType
+    title: string
+    desc: string
+  }
+  const OptionCard = ({ selected, onClick, icon: Icon, title, desc }: OptionCardProps) => (
     <div 
       onClick={onClick}
       style={{
@@ -213,11 +231,11 @@ export default function OnboardingPage() {
                 maxWidth: '400px',
                 margin: '0 auto'
               }}>
-                Let's set up your personalized health vault. We just need a few details to tailor the experience for you.
+                Let&apos;s set up your personalized health vault. We just need a few details to tailor the experience for you.
               </p>
             </div>
             <button onClick={handleNext} style={primaryBtnStyle} className="premium-btn">
-              Let's get started <ArrowRight size={18} />
+              Let&apos;s get started <ArrowRight size={18} />
             </button>
           </div>
         )

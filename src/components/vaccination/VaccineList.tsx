@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { toast } from 'sonner'
 import { VaccineItem } from './VaccineItem'
 import { useLanguageStore } from '@/store/useLanguageStore'
 import { ScheduledVaccine } from '@/types/vaccination'
@@ -37,7 +38,7 @@ export function VaccineList({ schedule, memberId, onUpdate }: VaccineListProps) 
       }
     } catch (error) {
       console.error(error)
-      alert(language === 'hindi' ? 'अपडेट करने में विफल' : 'Failed to update')
+      toast.error(language === 'hindi' ? 'अपडेट करने में विफल' : 'Failed to update')
     } finally {
       setMarking(null)
     }

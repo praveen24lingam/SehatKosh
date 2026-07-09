@@ -1,79 +1,110 @@
 'use client'
 
 import { useLanguageStore } from '@/store/useLanguageStore'
+import { FileSearch, Bell, Stethoscope, Landmark, CalendarDays, MessageCircleQuestion } from 'lucide-react'
 
-interface QuickChipsProps {
+interface ChatActionCardsProps {
   onSelect: (text: string) => void
 }
 
-export function QuickChips({ onSelect }: QuickChipsProps) {
+export function ChatActionCards({ onSelect }: ChatActionCardsProps) {
   const { language } = useLanguageStore()
 
-  const chips = language === 'hindi' ? [
-    'यह ब्लड रिपोर्ट समझाएं',
-    'सस्ती दवा खोजें',
-    'PM-JAY योजना क्या है?',
-    'डायबिटीज के लक्षण'
+  const actions = language === 'hindi' ? [
+    { text: 'मेडिकल रिपोर्ट का विश्लेषण करें', icon: FileSearch, color: '#635BFF', bgColor: 'rgba(99,91,255,0.08)' },
+    { text: 'दवा का रिमाइंडर लगाएं', icon: Bell, color: '#00D4FF', bgColor: 'rgba(0,212,255,0.08)' },
+    { text: 'लक्षणों की जांच करें', icon: Stethoscope, color: '#FF9900', bgColor: 'rgba(255,153,0,0.08)' },
+    { text: 'सरकारी स्वास्थ्य योजनाएं खोजें', icon: Landmark, color: '#E02424', bgColor: 'rgba(224,36,36,0.08)' },
+    { text: 'अपॉइंटमेंट बुक करें', icon: CalendarDays, color: '#00D924', bgColor: 'rgba(0,217,36,0.08)' },
+    { text: 'स्वास्थ्य से जुड़ा सवाल पूछें', icon: MessageCircleQuestion, color: '#0A2540', bgColor: 'rgba(10,37,64,0.08)' }
   ] : [
-    'Explain this blood report',
-    'Find cheaper medicine',
-    'What is PM-JAY scheme?',
-    'Diabetes symptoms'
+    { text: 'Analyze Medical Report', icon: FileSearch, color: '#635BFF', bgColor: 'rgba(99,91,255,0.08)' },
+    { text: 'Set Medicine Reminder', icon: Bell, color: '#00D4FF', bgColor: 'rgba(0,212,255,0.08)' },
+    { text: 'Check Symptoms', icon: Stethoscope, color: '#FF9900', bgColor: 'rgba(255,153,0,0.08)' },
+    { text: 'Find Government Health Schemes', icon: Landmark, color: '#E02424', bgColor: 'rgba(224,36,36,0.08)' },
+    { text: 'Book Appointment', icon: CalendarDays, color: '#00D924', bgColor: 'rgba(0,217,36,0.08)' },
+    { text: 'Ask a Health Question', icon: MessageCircleQuestion, color: '#0A2540', bgColor: 'rgba(10,37,64,0.08)' }
   ]
 
   return (
-    <div 
-      className="hide-scrollbar"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '8px',
-        overflowX: 'auto',
-        padding: '12px 16px 4px',
-        width: '100%',
-        fontFamily: 'Inter, sans-serif'
-      }}
-    >
+    <div style={{
+      width: '100%',
+      fontFamily: 'Inter, sans-serif'
+    }}>
       <style dangerouslySetInnerHTML={{__html: `
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
+        .action-card {
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          background: white;
+          border-radius: 16px;
+          border: 1px solid rgba(10, 37, 64, 0.08);
+          padding: 16px;
+          display: flex;
+          align-items: flex-start;
+          gap: 12px;
+          cursor: pointer;
+          text-align: left;
+          width: 100%;
+          outline: none;
         }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
+        .action-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 24px rgba(10,37,64,0.06);
+          border-color: rgba(99,91,255,0.3);
         }
-        .quick-chip-btn {
-          transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        .action-icon-wrap {
+          border-radius: 12px;
+          width: 40px;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
         }
-        .quick-chip-btn:hover {
-          border-color: #635BFF !important;
-          color: #635BFF !important;
-          background-color: #F4F4FF !important;
-          transform: translateY(-1px);
+        .action-cards-grid {
+          display: grid;
+          gap: 12px;
+          grid-template-columns: repeat(2, 1fr);
+        }
+        @media (max-width: 600px) {
+          .action-cards-grid {
+            grid-template-columns: 1fr;
+          }
         }
       `}} />
       
-      {chips.map((chip, idx) => (
-        <button
-          key={idx}
-          onClick={() => onSelect(chip)}
-          className="quick-chip-btn"
-          style={{
-            whiteSpace: 'nowrap',
-            padding: '8px 16px',
-            borderRadius: '999px',
-            border: '1px solid #E6EBF1',
-            backgroundColor: 'white',
-            color: '#425466',
-            fontSize: '13px',
-            fontWeight: '600',
-            cursor: 'pointer',
-            outline: 'none'
-          }}
-        >
-          {chip}
-        </button>
-      ))}
+      <div className="action-cards-grid">
+        {actions.map((action, idx) => {
+          const Icon = action.icon
+          return (
+            <button
+              key={idx}
+              onClick={() => onSelect(action.text)}
+              className="action-card"
+            >
+              <div className="action-icon-wrap" style={{ backgroundColor: action.bgColor, color: action.color }}>
+                <Icon size={20} strokeWidth={2.5} />
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', paddingTop: '2px' }}>
+                <span style={{ 
+                  fontSize: '14px', 
+                  fontWeight: '700', 
+                  color: '#0A2540',
+                  lineHeight: '1.3'
+                }}>
+                  {action.text}
+                </span>
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#8898AA',
+                  lineHeight: '1.4'
+                }}>
+                  {language === 'hindi' ? 'एआई असिस्टेंट से शुरू करें' : 'Start with AI assistant'}
+                </span>
+              </div>
+            </button>
+          )
+        })}
+      </div>
     </div>
   )
 }

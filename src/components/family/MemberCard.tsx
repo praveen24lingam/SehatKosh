@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { User, Droplets, Calendar } from 'lucide-react'
+import { Droplets, Calendar } from 'lucide-react'
 import { FamilyMember } from '@/types/database'
 import { useLanguageStore } from '@/store/useLanguageStore'
 

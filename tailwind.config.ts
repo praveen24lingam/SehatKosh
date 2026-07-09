@@ -23,6 +23,13 @@ const config: Config = {
         "stripe-light-muted": "var(--stripe-light-muted)",
         "border-light": "var(--border-light)",
         "border-dark": "var(--border-dark)",
+        "surface-light": "#F8FAFC",
+        "surface-card": "#FFFFFF",
+        "muted-light": "#94A3B8",
+        "primary-light": "#0A2540",
+        "text-secondary": "#425466",
+        "accent": "#635BFF",
+        "brand-saffron": "#FF9900",
       },
       fontFamily: {
         hindi: ["var(--font-hindi)"],

@@ -52,9 +52,9 @@ export default function LoginPage() {
         created_at: new Date().toISOString()
       })
       router.push('/onboarding')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Invalid email or password.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Invalid email or password.')
     } finally {
       setIsSubmitting(false)
     }
@@ -80,9 +80,9 @@ export default function LoginPage() {
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP. Please check Twilio configuration.')
       
       setStep('otp')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Failed to send OTP. Please try again.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Failed to send OTP. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -135,9 +135,9 @@ export default function LoginPage() {
         created_at: new Date().toISOString()
       })
       router.push('/onboarding')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Invalid OTP. Please try again.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Invalid OTP. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -258,7 +258,7 @@ export default function LoginPage() {
             </div>
 
             <h1 style={{ fontSize: '48px', fontWeight: '800', color: '#0A2540', lineHeight: '1.05', marginBottom: '24px', letterSpacing: '-1px' }}>
-              Your Family's<br/>
+              Your Family&apos;s<br/>
               <span style={{ color: '#635BFF' }}>Health Vault.</span>
             </h1>
             <p style={{ fontSize: '20px', color: '#425466', marginBottom: '64px', lineHeight: '1.6', maxWidth: '420px', fontWeight: '400' }}>
@@ -482,7 +482,7 @@ export default function LoginPage() {
 
                         <div className="text-center">
                           <p style={{ fontSize: '13px', color: '#8898AA', fontWeight: '500' }}>
-                            Didn't receive the code?{' '}
+                            Didn&apos;t receive the code?{' '}
                             <button type="button" onClick={handleSendOtp} disabled={isSubmitting} style={{ background: 'transparent', border: 'none', color: '#635BFF', fontWeight: '700', cursor: isSubmitting ? 'not-allowed' : 'pointer' }} className="hover:underline">
                               Resend OTP
                             </button>
@@ -500,7 +500,7 @@ export default function LoginPage() {
             <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', opacity: 0.8 }}>
               {step !== 'otp' && (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '24px', fontSize: '14px', color: '#425466', fontWeight: '500', position: 'relative', zIndex: 50 }}>
-                  <span>Don't have an account? <Link href="/signup" style={{ color: '#0A2540', textDecoration: 'none', fontWeight: '700', display: 'inline-block' }} className="hover:underline">Sign Up</Link></span>
+                  <span>Don&apos;t have an account? <Link href="/signup" style={{ color: '#0A2540', textDecoration: 'none', fontWeight: '700', display: 'inline-block' }} className="hover:underline">Sign Up</Link></span>
                 </div>
               )}
               

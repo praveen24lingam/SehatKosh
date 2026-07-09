@@ -1,48 +1,29 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ReminderCards } from '@/components/dashboard/ReminderCards'
-import { EmptyState } from '@/components/shared/EmptyState'
-import { Pill, Plus } from 'lucide-react'
-import { DoseReminder, FamilyMember } from '@/types/database'
+import { Plus, BellRing, Sparkles } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import { SmartAISuggestion } from '@/components/reminders/SmartAISuggestion'
+import { UnifiedReminderList } from '@/components/reminders/UnifiedReminderList'
+import { ReminderAddModal } from '@/components/reminders/ReminderAddModal'
+import { EmptyState } from '@/components/shared/EmptyState'
 
-export default function RemindersPage() {
+export default function ReminderCenterPage() {
   const { language } = useLanguageStore()
-  const [reminders, setReminders] = useState<DoseReminder[]>([])
-  const [members, setMembers] = useState<FamilyMember[]>([])
+  const [showAddModal, setShowAddModal] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [showAddForm, setShowAddForm] = useState(false)
-
-  // Form state
-  const [formData, setFormData] = useState({
-    memberId: '',
-    medicineName: '',
-    timeOfDay: 'morning',
-    timeLabel: '8:00 AM',
-    days: 'daily'
-  })
+  const [reminders, setReminders] = useState<any[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [remRes, memRes] = await Promise.all([
-          fetch('/api/reminders'),
-          fetch('/api/family')
-        ])
-        
-        const remData = await remRes.json()
-        const memData = await memRes.json()
-        
-        if (remData.reminders) setReminders(remData.reminders)
-        if (memData.members) {
-          setMembers(memData.members)
-          if (memData.members.length > 0) {
-            setFormData(prev => ({ ...prev, memberId: memData.members[0].id }))
-          }
+        const res = await fetch('/api/reminders')
+        const data = await res.json()
+        if (data.reminders) {
+          setReminders(data.reminders)
         }
       } catch (error) {
-        console.error('Failed to fetch data:', error)
+        console.error('Failed to fetch reminders:', error)
       } finally {
         setLoading(false)
       }
@@ -50,10 +31,14 @@ export default function RemindersPage() {
     fetchData()
   }, [])
 
+  const handleReminderAdded = (newReminder: any) => {
+    setReminders(prev => [newReminder, ...prev])
+    setShowAddModal(false)
+  }
+
   const handleMarkTaken = async (id: string) => {
     const today = new Date().toISOString().split('T')[0]
     
-    // Optimistic update
     setReminders(prev => prev.map(r => 
       r.id === id ? { ...r, last_taken_date: today } : r
     ))
@@ -66,174 +51,111 @@ export default function RemindersPage() {
       })
     } catch (error) {
       console.error(error)
-      // Revert on error
       setReminders(prev => prev.map(r => 
         r.id === id ? { ...r, last_taken_date: null } : r
       ))
     }
   }
 
-  const handleAddReminder = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    try {
-      const res = await fetch('/api/reminders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
-      const data = await res.json()
-      
-      if (data.reminder) {
-        setReminders([data.reminder, ...reminders])
-        setShowAddForm(false)
-        setFormData({
-          ...formData,
-          medicineName: '',
-          timeLabel: '8:00 AM'
-        })
-      }
-    } catch (error) {
-      console.error(error)
-      alert('Failed to add reminder')
-    }
-  }
+  const hasReminders = reminders.length > 0
 
   return (
-    <div className="p-4 md:p-8 max-w-3xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className={`text-2xl md:text-3xl font-display font-semibold text-primary-light`}>
-          {language === 'hindi' ? 'दवा की याद' : 'Dose Reminders'}
-        </h1>
-        {!showAddForm && (
-          <button 
-            onClick={() => setShowAddForm(true)}
-            className="flex items-center gap-1 px-4 py-2 bg-accent text-white rounded-lg font-medium text-sm hover:bg-accent/90"
-          >
-            <Plus className="w-4 h-4" />
-            {language === 'hindi' ? 'नई दवा' : 'Add New'}
-          </button>
-        )}
+    <div style={{
+      padding: '24px 16px',
+      maxWidth: '1200px',
+      margin: '0 auto',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '32px',
+      fontFamily: 'Inter, sans-serif'
+    }}>
+      {/* Header with Add Button */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+        <div>
+          <h1 style={{ fontSize: '28px', fontWeight: '800', color: '#0A2540', margin: 0, letterSpacing: '-0.5px' }}>
+            {language === 'hindi' ? 'रिमाइंडर सेंटर' : 'Reminder Center'}
+          </h1>
+          <p style={{ fontSize: '15px', color: '#425466', margin: '4px 0 0 0' }}>
+            {language === 'hindi' ? 'अपनी दवाइयाँ और अपॉइंटमेंट मैनेज करें' : 'Manage your medicines and appointments'}
+          </p>
+        </div>
+
+        <button 
+          onClick={() => setShowAddModal(true)}
+          style={{
+            display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px',
+            background: 'linear-gradient(135deg, #635BFF 0%, #00D4FF 100%)',
+            color: 'white', border: 'none', borderRadius: '14px', fontWeight: '700', fontSize: '14px',
+            cursor: 'pointer', boxShadow: '0 8px 24px rgba(99,91,255,0.25)',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+        >
+          <Plus size={18} strokeWidth={3} />
+          {language === 'hindi' ? 'रिमाइंडर जोड़ें' : 'Add Reminder'}
+        </button>
       </div>
 
-      {showAddForm && (
-        <form onSubmit={handleAddReminder} className="bg-surface-card p-6 rounded-xl border border-light">
-          <h3 className={`text-xl font-bold mb-6 ${language === 'hindi' ? 'font-hindi text-accent' : 'font-body text-accent'}`}>
-            {language === 'hindi' ? 'नई दवा का रिमाइंडर' : 'New Dose Reminder'}
-          </h3>
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm mb-1 text-text-secondary">
-                {language === 'hindi' ? 'किसके लिए?' : 'For whom?'}
-              </label>
-              <select 
-                value={formData.memberId}
-                onChange={e => setFormData({...formData, memberId: e.target.value})}
-                className="w-full bg-surface-light border border-light rounded-lg px-4 py-2 outline-none"
-              >
-                {members.map(m => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm mb-1 text-text-secondary">
-                {language === 'hindi' ? 'दवा का नाम' : 'Medicine Name'}
-              </label>
-              <input 
-                required
-                type="text" 
-                value={formData.medicineName}
-                onChange={e => setFormData({...formData, medicineName: e.target.value})}
-                className="w-full bg-surface-light border border-light rounded-lg px-4 py-2 outline-none focus:border-brand-saffron"
-                placeholder="e.g. Paracetamol 500mg"
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm mb-1 text-text-secondary">
-                  {language === 'hindi' ? 'समय का पहर' : 'Time of day'}
-                </label>
-                <select 
-                  value={formData.timeOfDay}
-                  onChange={e => setFormData({...formData, timeOfDay: e.target.value})}
-                  className="w-full bg-surface-light border border-light rounded-lg px-4 py-2 outline-none"
-                >
-                  <option value="morning">{language === 'hindi' ? 'सुबह' : 'Morning'}</option>
-                  <option value="afternoon">{language === 'hindi' ? 'दोपहर' : 'Afternoon'}</option>
-                  <option value="evening">{language === 'hindi' ? 'शाम' : 'Evening'}</option>
-                  <option value="night">{language === 'hindi' ? 'रात' : 'Night'}</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm mb-1 text-text-secondary">
-                  {language === 'hindi' ? 'सटीक समय' : 'Exact Time'}
-                </label>
-                <input 
-                  required
-                  type="time" 
-                  value={
-                    // basic conversion logic for MVP
-                    formData.timeLabel.includes('AM') 
-                      ? formData.timeLabel.replace(' AM', '').padStart(5, '0') 
-                      : String((parseInt(formData.timeLabel) % 12) + 12).padStart(2, '0') + ':00'
-                  }
-                  onChange={e => {
-                    // Very basic MVP conversion to 12h label
-                    const [h, m] = e.target.value.split(':')
-                    const hour = parseInt(h)
-                    const ampm = hour >= 12 ? 'PM' : 'AM'
-                    const displayHour = hour % 12 || 12
-                    setFormData({...formData, timeLabel: `${displayHour}:${m} ${ampm}`})
-                  }}
-                  className="w-full bg-surface-light border border-light rounded-lg px-4 py-2 outline-none focus:border-brand-saffron"
-                />
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-8 flex gap-3">
-            <button 
-              type="button"
-              onClick={() => setShowAddForm(false)}
-              className="flex-1 py-3 border border-light rounded-lg font-medium text-text-secondary hover:bg-surface-light"
-            >
-              {language === 'hindi' ? 'रद्द करें' : 'Cancel'}
-            </button>
-            <button 
-              type="submit"
-              className="flex-1 py-3 bg-accent text-white rounded-lg font-medium hover:bg-accent/90"
-            >
-              {language === 'hindi' ? 'सेव करें' : 'Save Reminder'}
-            </button>
-          </div>
-        </form>
-      )}
-
       {loading ? (
-        <div className="animate-pulse space-y-4">
-          <div className="h-20 bg-surface-light rounded-xl"></div>
-          <div className="h-20 bg-surface-light rounded-xl"></div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite' }}>
+          <div style={{ height: '120px', background: '#F8FAFC', borderRadius: '20px' }} />
+          <div style={{ height: '80px', background: '#F8FAFC', borderRadius: '16px' }} />
+          <div style={{ height: '80px', background: '#F8FAFC', borderRadius: '16px' }} />
         </div>
       ) : (
         <>
-          {reminders.length === 0 ? (
-            <EmptyState 
-              icon={Pill}
-              title={language === 'hindi' ? 'कोई दवा रिमाइंडर नहीं' : 'No Dose Reminders'}
-              description={language === 'hindi' 
-                ? 'अभी तक कोई दवा नहीं जोड़ी गई है।' 
-                : 'You have not added any medicines yet.'}
-            />
+          {/* Smart AI Suggestion */}
+          <SmartAISuggestion />
+
+          {/* Main Content */}
+          {!hasReminders ? (
+            <div style={{ background: 'white', padding: '48px 24px', borderRadius: '24px', textAlign: 'center', border: '1px solid rgba(10,37,64,0.05)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '24px', background: 'linear-gradient(135deg, rgba(99,91,255,0.1) 0%, rgba(0,212,255,0.1) 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#635BFF', marginBottom: '24px' }}>
+                <BellRing size={40} />
+              </div>
+              <h2 style={{ fontSize: '20px', fontWeight: '800', color: '#0A2540', margin: '0 0 8px 0' }}>
+                {language === 'hindi' ? 'अभी तक कोई रिमाइंडर नहीं' : 'No reminders yet'}
+              </h2>
+              <p style={{ fontSize: '15px', color: '#425466', margin: '0 0 32px 0', maxWidth: '400px' }}>
+                {language === 'hindi' 
+                  ? 'अपना पहला रिमाइंडर मैन्युअल रूप से बनाएं या एआई को आपके लिए यह करने दें।' 
+                  : 'Create your first reminder manually or let AI do it for you.'}
+              </p>
+              
+              <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                    background: '#635BFF', color: 'white', border: 'none', borderRadius: '12px',
+                    fontWeight: '600', fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(99,91,255,0.2)'
+                  }}
+                >
+                  <Sparkles size={18} />
+                  {language === 'hindi' ? 'एआई से पूछें' : 'Ask AI'}
+                </button>
+                <button 
+                  onClick={() => setShowAddModal(true)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px',
+                    background: 'white', color: '#425466', border: '1px solid rgba(10,37,64,0.1)', borderRadius: '12px',
+                    fontWeight: '600', fontSize: '14px', cursor: 'pointer'
+                  }}
+                >
+                  <Plus size={18} />
+                  {language === 'hindi' ? 'रिमाइंडर बनाएं' : 'Create Reminder'}
+                </button>
+              </div>
+            </div>
           ) : (
-            <ReminderCards reminders={reminders} onMarkTaken={handleMarkTaken} />
+            <UnifiedReminderList reminders={reminders} onMarkTaken={handleMarkTaken} />
           )}
         </>
       )}
+
+      {/* Add Modal */}
+      {showAddModal && <ReminderAddModal onClose={() => setShowAddModal(false)} onAdd={handleReminderAdded} />}
     </div>
   )
 }

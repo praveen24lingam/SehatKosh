@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 const PUBLIC_ROUTES = ['/', '/language', '/login', '/signup', '/forgot-password', '/onboarding']
 const PUBLIC_PATTERN = /^\/health-card\/.+/
 
-export async function proxy(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Public routes — auth check nahi
@@ -27,7 +27,7 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll()
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({
             request,
           })

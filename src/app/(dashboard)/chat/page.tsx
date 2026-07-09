@@ -4,19 +4,17 @@ import { useEffect, useRef, useState } from 'react'
 import { ChatInput } from '@/components/chat/ChatInput'
 import { MessageBubble } from '@/components/chat/MessageBubble'
 import { LoadingBubble } from '@/components/chat/LoadingBubble'
-import { QuickChips } from '@/components/chat/QuickChips'
+import { ChatActionCards } from '@/components/chat/QuickChips'
 import { useChatStore } from '@/store/useChatStore'
 import { useAuthStore } from '@/store/useAuthStore'
+import { useLanguageStore } from '@/store/useLanguageStore'
 import { ChatMessage } from '@/types/chat'
-import { BloodReportCard } from '@/components/chat/cards/BloodReportCard'
-import { JanAushadhiCard } from '@/components/chat/cards/JanAushadhiCard'
-import { YojanaCard } from '@/components/chat/cards/YojanaCard'
-import { MedicineInfoCard } from '@/components/chat/cards/MedicineInfoCard'
-import { HandwrittenRejectCard } from '@/components/chat/cards/HandwrittenRejectCard'
+import { Sparkles, MessageCircle, Clock } from 'lucide-react'
 
 export default function ChatPage() {
   const { messages, addMessage, isLoading, setLoading } = useChatStore()
   const { user } = useAuthStore()
+  const { language } = useLanguageStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -85,59 +83,6 @@ export default function ChatPage() {
     }
   }
 
-  const renderCustomCard = (message: ChatMessage) => {
-    if (!message.responseType) return null
-    
-    switch (message.responseType) {
-      case 'document_analysis':
-        return (
-          <BloodReportCard 
-            summary="Aapki blood report mein Vitamin B12 aur D3 ki kami hai. Baaki sab normal lag raha hai."
-            abnormalValues={[
-              { name: 'Vitamin B12', value: '180 pg/mL', range: '200-900 pg/mL' },
-              { name: 'Vitamin D3', value: '15 ng/mL', range: '30-100 ng/mL' }
-            ]}
-            doctorConsultation="Yes (Physician se miliye)"
-          />
-        )
-      case 'jan_aushadhi':
-        return (
-          <JanAushadhiCard 
-            brandedName="Telma 40 (Telmisartan)"
-            genericName="Telmisartan 40mg"
-            savings="₹180 / month"
-            storeLink="https://janaushadhi.gov.in/KendraDetails.aspx"
-          />
-        )
-      case 'yojana':
-        return (
-          <YojanaCard 
-            schemes={[
-              {
-                name: 'Ayushman Bharat (PM-JAY)',
-                amount: '₹5,00,000/year',
-                reason: 'Aapki aay aur BPL card ke aadhar par',
-                link: 'https://pmjay.gov.in/'
-              }
-            ]}
-          />
-        )
-      case 'medicine_info':
-        return (
-          <MedicineInfoCard 
-            name="Paracetamol 500mg"
-            uses="Bukhaar aur dard kam karne ke liye"
-            sideEffects="Liver pe asar (agar zyada dose li jaye)"
-            whenToTake="Khana khane ke baad, din mein 2-3 baar zaroorat padne par"
-          />
-        )
-      case 'handwritten_reject':
-        return <HandwrittenRejectCard />
-      default:
-        return null
-    }
-  }
-
   return (
     <div className="chat-page-container" style={{
       display: 'flex',
@@ -171,52 +116,101 @@ export default function ChatPage() {
           <div style={{
             display: 'flex',
             flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%',
-            textAlign: 'center',
-            padding: '48px 24px',
-            flex: 1
+            width: '100%',
+            maxWidth: '800px',
+            margin: '0 auto',
+            padding: '16px 0 32px'
           }}>
+            {/* Premium Hero */}
             <div style={{
-              width: '64px',
-              height: '64px',
-              backgroundColor: '#F0EFFF',
-              borderRadius: '50%',
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '20px',
-              fontSize: '28px',
-              boxShadow: '0 4px 12px rgba(99,91,255,0.1)'
+              textAlign: 'center',
+              marginBottom: '32px'
             }}>
-              🤖
+              <div style={{
+                width: '64px',
+                height: '64px',
+                background: 'linear-gradient(135deg, rgba(99,91,255,0.1) 0%, rgba(0,212,255,0.1) 100%)',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginBottom: '16px',
+                boxShadow: '0 8px 24px rgba(99,91,255,0.08)'
+              }}>
+                <Sparkles size={32} color="#635BFF" strokeWidth={1.5} />
+              </div>
+              <h2 style={{
+                fontSize: '28px',
+                fontWeight: '800',
+                color: '#0A2540',
+                marginBottom: '8px',
+                letterSpacing: '-0.5px'
+              }}>
+                {/* Fallback to 'Dost' (friend) if user name is missing */}
+                {user?.name 
+                  ? (language === 'hindi' ? `मैं आपकी कैसे मदद कर सकता हूँ, ${user.name.split(' ')[0]}?` : `How can I help you today, ${user.name.split(' ')[0]}?`)
+                  : (language === 'hindi' ? 'मैं आपकी कैसे मदद कर सकता हूँ?' : 'How can I help you today?')}
+              </h2>
+              <p style={{
+                color: '#425466',
+                fontSize: '16px',
+                maxWidth: '420px',
+                margin: 0
+              }}>
+                {language === 'hindi'
+                  ? 'अपने स्वास्थ्य से जुड़ा कोई भी सवाल पूछें, या सीधे रिपोर्ट अपलोड करें।'
+                  : 'Ask any health-related question, or upload your reports directly.'}
+              </p>
             </div>
-            <h2 style={{
-              fontSize: '24px',
-              fontWeight: '800',
-              color: '#0A2540',
-              marginBottom: '8px',
-              letterSpacing: '-0.5px'
-            }}>
-              Sehat Saathi
-            </h2>
-            <p style={{
-              color: '#425466',
-              fontSize: '15px',
-              lineHeight: '1.6',
-              maxWidth: '380px',
-              margin: 0
-            }}>
-              Main aapka AI Health Assistant hoon. Report bhejein, dawai ke baare mein poochhein, ya yojana dhoondein.
-            </p>
+
+            {/* Action Cards Grid */}
+            <ChatActionCards onSelect={(text) => handleSendMessage(text)} />
+
+            {/* Recent Conversations Placeholder */}
+            <div style={{ marginTop: '40px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+                <Clock size={16} color="#8898AA" />
+                <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#425466', margin: 0 }}>
+                  {language === 'hindi' ? 'हाल की बातचीत' : 'Recent Conversations'}
+                </h3>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {[
+                  { title: language === 'hindi' ? 'रक्त रिपोर्ट विश्लेषण' : 'Blood Report Analysis', date: language === 'hindi' ? 'कल' : 'Yesterday' },
+                  { title: language === 'hindi' ? 'पीएम-जय योजना विवरण' : 'PM-JAY Scheme Details', date: language === 'hindi' ? '2 दिन पहले' : '2 days ago' }
+                ].map((chat, idx) => (
+                  <div key={idx} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '16px',
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    border: '1px solid rgba(10,37,64,0.06)',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: '0 2px 8px rgba(10,37,64,0.02)'
+                  }} className="recent-chat-card">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ padding: '8px', backgroundColor: '#F4F4FF', borderRadius: '8px', color: '#635BFF' }}>
+                        <MessageCircle size={18} />
+                      </div>
+                      <span style={{ fontSize: '15px', fontWeight: '500', color: '#0A2540' }}>{chat.title}</span>
+                    </div>
+                    <span style={{ fontSize: '13px', color: '#8898AA' }}>{chat.date}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
         {messages.map((message) => (
           <div key={message.id}>
             <MessageBubble message={message} />
-            {message.role === 'assistant' && renderCustomCard(message)}
           </div>
         ))}
         
@@ -232,7 +226,6 @@ export default function ChatPage() {
         display: 'flex',
         flexDirection: 'column'
       }}>
-        {messages.length === 0 && <QuickChips onSelect={(text) => handleSendMessage(text)} />}
         <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
       </div>
     </div>

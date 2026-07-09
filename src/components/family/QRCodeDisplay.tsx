@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+// Currently unused — intended for future /health-card route
 import QRCode from 'qrcode'
 
 interface QRCodeDisplayProps {
@@ -31,9 +32,11 @@ export function QRCodeDisplay({ url, size = 120 }: QRCodeDisplayProps) {
   if (!qrCodeUrl) return <div style={{ width: size, height: size }} className="animate-pulse bg-gray-200" />
 
   return (
-    <img 
-      src={qrCodeUrl} 
-      alt="QR Code" 
+    // QR code is a generated data-URI; next/image cannot optimize data URIs.
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={qrCodeUrl}
+      alt="QR Code"
       width={size} 
       height={size}
       style={{ display: 'block' }}

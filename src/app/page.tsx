@@ -1,14 +1,6 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-
 export default function Home() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    setIsVisible(true);
-  }, []);
-
   return (
     <main className="overflow-x-hidden w-full" style={{
       /* RESPONSIVE FIX: Added position: relative to establish positioning context so overflow-x-hidden successfully clips absolute elements */
@@ -120,13 +112,13 @@ export default function Home() {
       <section className="resp-hero" style={{ maxWidth: '1200px', margin: '0 auto', padding: '160px 48px 100px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '48px', alignItems: 'center', position: 'relative', zIndex: 10 }}>
         
         {/* Left */}
-        <div className={isVisible ? 'fade-in-up' : 'opacity-0'}>
+        <div className="fade-in-up">
           <div style={{ color: '#635BFF', fontSize: '14px', fontWeight: '700', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase', letterSpacing: '1px' }}>
             <span style={{ background: 'rgba(99,91,255,0.1)', padding: '6px 12px', borderRadius: '6px' }}>✦ Hackathon Project</span>
           </div>
           
           <h1 className="resp-h1" style={{ fontSize: '72px', fontWeight: '800', color: '#0A2540', lineHeight: '1.05', letterSpacing: '-2.5px', margin: '0 0 24px 0' }}>
-            Your Family's<br/>
+            Your Family&apos;s<br/>
             <span style={{ color: '#635BFF' }}>Health Vault.</span>
           </h1>
           
@@ -164,7 +156,7 @@ export default function Home() {
         </div>
 
         {/* Right — Premium Dashboard Mockup */}
-        <div className={`pulse-card ${isVisible ? 'fade-in-up delay-200' : 'opacity-0'}`} style={{
+        <div className="pulse-card fade-in-up delay-200" style={{
           background: 'white', borderRadius: '24px', border: '1px solid #E6EBF1', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 32px 64px rgba(10,37,64,0.08)'
         }}>
           {/* Mockup Header */}
@@ -232,15 +224,15 @@ export default function Home() {
 
       {/* STATS */}
       <section className="resp-stats" style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 48px', borderTop: '1px solid #E6EBF1', borderBottom: '1px solid #E6EBF1', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px', textAlign: 'center', background: 'rgba(246,249,252,0.5)' }}>
-        <div className={isVisible ? 'fade-in-up delay-100' : 'opacity-0'}>
+        <div className="fade-in-up delay-100">
           <div style={{ fontSize: '36px', fontWeight: '800', color: '#0A2540' }}>₹1,200+</div>
           <div style={{ fontSize: '14px', color: '#425466', marginTop: '4px', fontWeight: '500' }}>Average monthly savings</div>
         </div>
-        <div className={isVisible ? 'fade-in-up delay-200' : 'opacity-0'}>
+        <div className="fade-in-up delay-200">
           <div style={{ fontSize: '36px', fontWeight: '800', color: '#0A2540' }}>50+</div>
           <div style={{ fontSize: '14px', color: '#425466', marginTop: '4px', fontWeight: '500' }}>Govt schemes covered</div>
         </div>
-        <div className={isVisible ? 'fade-in-up delay-300' : 'opacity-0'}>
+        <div className="fade-in-up delay-300">
           <div style={{ fontSize: '36px', fontWeight: '800', color: '#0A2540' }}>Multilingual</div>
           <div style={{ fontSize: '14px', color: '#425466', marginTop: '4px', fontWeight: '500' }}>Available in your language</div>
         </div>
@@ -250,7 +242,7 @@ export default function Home() {
       <section id="features" className="resp-section" style={{ padding: '120px 48px', background: 'transparent' }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center', marginBottom: '80px' }}>
           <h2 className="resp-h2" style={{ fontSize: '48px', fontWeight: '800', color: '#0A2540', letterSpacing: '-1px' }}>What does SehatKosh do?</h2>
-          <p style={{ fontSize: '20px', color: '#425466', marginTop: '16px' }}>One app for your entire family's health.</p>
+          <p style={{ fontSize: '20px', color: '#425466', marginTop: '16px' }}>One app for your entire family&apos;s health.</p>
         </div>
 
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '100px' }}>
@@ -260,7 +252,7 @@ export default function Home() {
             <div>
               <div style={{ color: '#635BFF', fontWeight: '700', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '16px' }}>AI Assistant</div>
               <h3 style={{ fontSize: '36px', fontWeight: '800', color: '#0A2540', marginBottom: '24px', lineHeight: '1.2' }}>Ask AI, Get Instant Answers</h3>
-              <p style={{ fontSize: '18px', color: '#425466', lineHeight: '1.6', marginBottom: '24px' }}>Have a fever? Don't understand a medical report? Just ask — our AI explains everything clearly. No waiting, no appointments.</p>
+              <p style={{ fontSize: '18px', color: '#425466', lineHeight: '1.6', marginBottom: '24px' }}>Have a fever? Don&apos;t understand a medical report? Just ask — our AI explains everything clearly. No waiting, no appointments.</p>
             </div>
             <div className="hover-lift resp-feature-card" style={{ background: '#F6F9FC', borderRadius: '16px', padding: '40px', border: '1px solid #E6EBF1' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -332,7 +324,7 @@ export default function Home() {
               { quote: "I never miss my child's vaccine schedule anymore.", name: "Sunita D.", city: "Jaipur" }
             ].map((t, i) => (
               <div key={i} className="hover-lift resp-feature-card" style={{ background: '#F6F9FC', padding: '40px', borderRadius: '16px', border: '1px solid #E6EBF1' }}>
-                <div style={{ color: '#635BFF', fontSize: '64px', lineHeight: 0.5, opacity: 0.5, marginBottom: '24px', fontFamily: 'serif' }}>"</div>
+                <div style={{ color: '#635BFF', fontSize: '64px', lineHeight: 0.5, opacity: 0.5, marginBottom: '24px', fontFamily: 'serif' }}>&ldquo;</div>
                 <p style={{ fontSize: '18px', color: '#0A2540', fontStyle: 'italic', marginBottom: '32px', lineHeight: '1.6' }}>{t.quote}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                   <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#635BFF', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '700', fontSize: '18px' }}>{t.name[0]}</div>
@@ -352,7 +344,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: 0, right: 0, width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(99,91,255,0.2) 0%, transparent 70%)', pointerEvents: 'none' }}></div>
         
         <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center', position: 'relative', zIndex: 10, marginBottom: '64px' }}>
-          <h2 className="resp-h2-large" style={{ fontSize: '48px', fontWeight: '800', color: 'white', marginBottom: '20px', letterSpacing: '-1px' }}>Secure Your Family's Health</h2>
+          <h2 className="resp-h2-large" style={{ fontSize: '48px', fontWeight: '800', color: 'white', marginBottom: '20px', letterSpacing: '-1px' }}>Secure Your Family&apos;s Health</h2>
           <p style={{ fontSize: '18px', color: '#8898AA', marginBottom: '32px', lineHeight: '1.6' }}>An initiative built to make medical records accessible, AI advice multilingual, and medicines affordable for every Indian household.</p>
           <a href="/login" style={{ background: '#635BFF', color: 'white', textDecoration: 'none', padding: '14px 32px', borderRadius: '999px', fontSize: '16px', fontWeight: '600', display: 'inline-block' }} className="hover-lift">Access SehatKosh &gt;</a>
         </div>

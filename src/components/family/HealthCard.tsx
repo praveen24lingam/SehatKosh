@@ -1,5 +1,6 @@
 'use client'
 
+// Currently unused — intended for future /health-card route
 import { FamilyMember } from '@/types/database'
 import { useLanguageStore } from '@/store/useLanguageStore'
 import { QRCodeDisplay } from './QRCodeDisplay'

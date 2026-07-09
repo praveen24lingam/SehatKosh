@@ -66,6 +66,7 @@ export async function POST(request: Request) {
       const buffer = Buffer.from(base64Data, 'base64')
       const fileName = `${session.user.id}/${memberId}/${Date.now()}.jpg`
 
+      // IMPORTANT: Create bucket 'health-records' in Supabase dashboard before deploying
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('health-records')
         .upload(fileName, buffer, { contentType: 'image/jpeg', upsert: false })

@@ -1,15 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft, Shield, Lock, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 export default function ForgotPasswordPage() {
-  const router = useRouter()
-  
   const [email, setEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
@@ -33,9 +30,9 @@ export default function ForgotPasswordPage() {
       if (error) throw error
       
       setIsSuccess(true)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Failed to send reset instructions.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Failed to send reset instructions.')
     } finally {
       setIsSubmitting(false)
     }
@@ -151,7 +148,7 @@ export default function ForgotPasswordPage() {
             </div>
 
             <h1 style={{ fontSize: '48px', fontWeight: '800', color: '#0A2540', lineHeight: '1.05', marginBottom: '24px', letterSpacing: '-1px' }}>
-              Your Family's<br/>
+              Your Family&apos;s<br/>
               <span style={{ color: '#635BFF' }}>Health Vault.</span>
             </h1>
             <p style={{ fontSize: '20px', color: '#425466', marginBottom: '64px', lineHeight: '1.6', maxWidth: '420px', fontWeight: '400' }}>

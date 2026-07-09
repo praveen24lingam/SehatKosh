@@ -75,7 +75,23 @@ export default function FamilyPage() {
                 action={
                   <button 
                     onClick={() => setShowAddForm(true)}
-                    className="mt-6 px-6 py-2.5 bg-accent text-white rounded-lg font-medium hover:bg-accent/90"
+                    style={{
+                      marginTop: '24px',
+                      padding: '12px 28px',
+                      backgroundColor: '#635BFF',
+                      background: 'linear-gradient(135deg, #7A73FF 0%, #635BFF 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '12px',
+                      fontWeight: '700',
+                      fontSize: '15px',
+                      cursor: 'pointer',
+                      boxShadow: '0 8px 20px rgba(99,91,255,0.3)',
+                      transition: 'all 0.2s ease',
+                      fontFamily: 'Inter, sans-serif'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
                   >
                     {language === 'hindi' ? 'नया सदस्य जोड़ें' : 'Add New Member'}
                   </button>

@@ -36,9 +36,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             boxShadow: '0 4px 12px rgba(99,91,255,0.12)'
           }}>
             {message.imageUrl && (
-              <img 
-                src={message.imageUrl} 
-                alt="Uploaded" 
+              // Base64 data-URI upload; next/image cannot optimize data URIs.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={message.imageUrl}
+                alt="Uploaded"
                 style={{
                   width: '100%',
                   maxWidth: '240px',

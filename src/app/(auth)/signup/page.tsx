@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowLeft, Shield, Lock, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Lock, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useAuthStore } from '@/store/useAuthStore'
 import { createClient } from '@/lib/supabase/client'
 
@@ -49,10 +49,21 @@ export default function SignupPage() {
         throw new Error('An account with this email already exists. Please log in.')
       }
 
+      // Ensure a row exists in our custom users table for RLS
+      if (data.user) {
+        const { error: insertError } = await supabase.from('users').insert({
+          id: data.user.id,
+          email: data.user.email,
+        })
+        if (insertError && insertError.code !== '23505') { // Ignore unique violation if row exists
+          console.error("Failed to insert user into users table", insertError)
+        }
+      }
+
       setIsEmailSent(true)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Failed to create account.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Failed to create account.')
     } finally {
       setIsSubmitting(false)
     }
@@ -78,9 +89,9 @@ export default function SignupPage() {
       if (!res.ok) throw new Error(data.error || 'Failed to send OTP. Please check Twilio configuration.')
       
       setStep('otp')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Failed to send OTP. Please try again.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Failed to send OTP. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -133,9 +144,9 @@ export default function SignupPage() {
         created_at: new Date().toISOString()
       })
       router.push('/onboarding')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      setErrorMsg(error.message || 'Invalid OTP. Please try again.')
+      setErrorMsg((error instanceof Error ? error.message : '') || 'Invalid OTP. Please try again.')
     } finally {
       setIsSubmitting(false)
     }
@@ -256,7 +267,7 @@ export default function SignupPage() {
             </div>
 
             <h1 style={{ fontSize: '48px', fontWeight: '800', color: '#0A2540', lineHeight: '1.05', marginBottom: '24px', letterSpacing: '-1px' }}>
-              Your Family's<br/>
+              Your Family&apos;s<br/>
               <span style={{ color: '#635BFF' }}>Health Vault.</span>
             </h1>
             <p style={{ fontSize: '20px', color: '#425466', marginBottom: '64px', lineHeight: '1.6', maxWidth: '420px', fontWeight: '400' }}>
@@ -452,7 +463,7 @@ export default function SignupPage() {
 
                         <div className="text-center">
                           <p style={{ fontSize: '13px', color: '#8898AA', fontWeight: '500' }}>
-                            Didn't receive the code?{' '}
+                            Didn&apos;t receive the code?{' '}
                             <button type="button" onClick={handleSendOtp} disabled={isSubmitting} style={{ background: 'transparent', border: 'none', color: '#635BFF', fontWeight: '700', cursor: isSubmitting ? 'not-allowed' : 'pointer' }} className="hover:underline">
                               Resend OTP
                             </button>
