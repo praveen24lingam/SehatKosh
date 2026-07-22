@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { Send, Camera, Paperclip, X, Mic, MicOff } from 'lucide-react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+import { Send, Camera, Paperclip, X, Mic, Square, LoaderCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { useLanguageStore } from '@/store/useLanguageStore'
-import { useVoiceInput } from '@/hooks/useVoiceInput'
+import { useVoiceInput, VoiceErrorCode } from '@/hooks/useVoiceInput'
 import { prepareImageForUpload, approxBytesOfDataUrl, MAX_UPLOAD_BYTES } from '@/lib/image'
 
 interface ChatInputProps {
@@ -16,39 +16,53 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const { language } = useLanguageStore()
   const [message, setMessage] = useState('')
   const [image, setImage] = useState<string | null>(null)
-  const [baseMessage, setBaseMessage] = useState('')
   const [isFocused, setIsFocused] = useState(false)
   const cameraInputRef = useRef<HTMLInputElement>(null)
   const galleryInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  const { isListening, transcript, startListening, stopListening, isSupported, error } = useVoiceInput(language === 'hindi' ? 'hi-IN' : 'en-IN')
+  // Voice input appends to whatever is already typed rather than replacing it,
+  // and never sends on its own — the user reads and edits first.
+  const handleTranscript = useCallback((text: string) => {
+    setMessage((current) => {
+      if (!current.trim()) return text
+      return current.endsWith(' ') ? current + text : `${current} ${text}`
+    })
+    textareaRef.current?.focus()
+  }, [])
 
-  // Error handling for voice input
-  useEffect(() => {
-    if (error) {
-      if (error === 'not-allowed') {
-        toast.error('Mic permission denied. Please allow microphone access in browser settings.')
-      } else if (error === 'no-speech') {
-        toast.error(language === 'hindi' ? 'कुछ सुनाई नहीं दिया, दोबारा बोलें' : "Couldn't hear anything, please try again")
-      } else {
-        toast.error(language === 'hindi' ? 'माइक्रोफ़ोन में त्रुटि हुई' : 'Microphone error occurred')
-      }
+  const handleVoiceError = useCallback((code: VoiceErrorCode) => {
+    const hi = language === 'hindi'
+    const messages: Record<VoiceErrorCode, string> = {
+      'unsupported': hi
+        ? 'इस ब्राउज़र में वॉइस इनपुट काम नहीं करता। कृपया टाइप करें।'
+        : 'Voice input is not supported in this browser. Please type instead.',
+      'permission-denied': hi
+        ? 'माइक की अनुमति नहीं मिली। ब्राउज़र सेटिंग्स में माइक्रोफ़ोन चालू करें।'
+        : 'Mic permission denied. Please allow microphone access in your browser settings.',
+      'no-mic': hi
+        ? 'कोई माइक्रोफ़ोन नहीं मिला।'
+        : 'No microphone found on this device.',
+      'no-speech': hi
+        ? 'कुछ सुनाई नहीं दिया, दोबारा बोलें।'
+        : "Couldn't hear anything, please try again.",
+      'too-short': hi
+        ? 'रिकॉर्डिंग बहुत छोटी थी। बटन दबाकर थोड़ा लंबा बोलें।'
+        : 'That recording was too short. Hold on a moment longer and speak.',
+      'transcribe-failed': hi
+        ? 'आवाज़ समझने में दिक्कत हुई। कृपया दोबारा कोशिश करें।'
+        : 'Could not transcribe that. Please try again.',
+      'network': hi
+        ? 'नेटवर्क की समस्या। कनेक्शन जाँच कर दोबारा कोशिश करें।'
+        : 'Network problem. Check your connection and try again.',
     }
-  }, [error, language])
+    toast.error(messages[code])
+  }, [language])
 
-  // Real-time transcript append
-  useEffect(() => {
-    if (isListening && transcript) {
-      const spacer = baseMessage && !baseMessage.endsWith(' ') ? ' ' : ''
-      setMessage(baseMessage + spacer + transcript)
-    }
-  }, [transcript, isListening]) // we only want to update when transcript changes while listening
-
-  const handleStartListening = () => {
-    setBaseMessage(message)
-    startListening()
-  }
+  const { isRecording, isTranscribing, toggle } = useVoiceInput({
+    onTranscript: handleTranscript,
+    onError: handleVoiceError,
+  })
 
   // Auto-resize textarea
   useEffect(() => {
@@ -147,12 +161,38 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           0% { transform: scale(1); opacity: 0.8; }
           100% { transform: scale(1.5); opacity: 0; }
         }
+        @keyframes rec-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.25; }
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+        /* The recording button itself breathes, so the state is obvious even
+           to someone who cannot read the banner above it. */
+        @keyframes mic-breathe {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.08); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .chat-mic-recording { animation: none !important; }
+          .chat-mic-recording .mic-halo { animation: none !important; }
+        }
       `}} />
 
-      {isListening && (
-        <div style={{ fontSize: '13px', color: 'var(--destructive)', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: 'var(--destructive)', borderRadius: '50%', animation: 'pulse-ring 1s infinite' }} />
-          {language === 'hindi' ? '🎙 सुन रहा हूँ...' : '🎙 Listening...'}
+      {isRecording && (
+        <div style={{ fontSize: '13px', color: 'var(--destructive)', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: 'var(--destructive)', borderRadius: '50%', animation: 'rec-blink 1.2s ease-in-out infinite' }} />
+          {language === 'hindi'
+            ? 'सुन रहा हूँ... बोलकर फिर से बटन दबाएँ'
+            : 'Listening... tap the button again when done'}
+        </div>
+      )}
+
+      {isTranscribing && (
+        <div style={{ fontSize: '13px', color: 'var(--primary)', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <LoaderCircle size={13} style={{ animation: 'spin 1s linear infinite' }} />
+          {language === 'hindi' ? 'आवाज़ को टेक्स्ट में बदल रहे हैं...' : 'Converting speech to text...'}
         </div>
       )}
 
@@ -298,39 +338,59 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           rows={1}
         />
 
-        {isSupported && (
-          <button 
-            onClick={isListening ? stopListening : handleStartListening}
-            className="chat-icon-btn"
-            style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '12px',
-              border: 'none',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              backgroundColor: isListening ? 'var(--destructive)' : 'transparent',
-              color: isListening ? 'white' : 'var(--icon-muted)',
-              outline: 'none',
-              flexShrink: 0,
-              position: 'relative'
-            }}
-            title={isListening ? 'Stop listening' : 'Start listening'}
-          >
-            {isListening && (
-              <div style={{
+        <button
+          onClick={toggle}
+          disabled={disabled || isTranscribing}
+          className={`chat-icon-btn ${isRecording ? 'chat-mic-recording' : ''}`}
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            border: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: isTranscribing ? 'wait' : 'pointer',
+            backgroundColor: isRecording ? 'var(--destructive)' : 'transparent',
+            color: isRecording ? 'white' : 'var(--icon-muted)',
+            outline: 'none',
+            flexShrink: 0,
+            position: 'relative',
+            animation: isRecording ? 'mic-breathe 1.6s ease-in-out infinite' : undefined
+          }}
+          aria-label={
+            isRecording
+              ? (language === 'hindi' ? 'रिकॉर्डिंग बंद करें' : 'Stop recording')
+              : (language === 'hindi' ? 'बोलकर लिखें' : 'Record voice')
+          }
+          aria-pressed={isRecording}
+          title={
+            isTranscribing
+              ? (language === 'hindi' ? 'बदल रहे हैं...' : 'Transcribing...')
+              : isRecording
+                ? (language === 'hindi' ? 'रोकें' : 'Stop recording')
+                : (language === 'hindi' ? 'बोलकर लिखें' : 'Speak instead of typing')
+          }
+        >
+          {isRecording && (
+            <div
+              className="mic-halo"
+              aria-hidden
+              style={{
                 position: 'absolute',
                 inset: 0,
                 borderRadius: '12px',
                 border: '2px solid var(--destructive)',
                 animation: 'pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite'
-              }} />
-            )}
-            {isListening ? <MicOff size={18} /> : <Mic size={18} />}
-          </button>
-        )}
+              }}
+            />
+          )}
+          {isTranscribing
+            ? <LoaderCircle size={18} style={{ animation: 'spin 1s linear infinite' }} />
+            : isRecording
+              ? <Square size={16} fill="currentColor" />
+              : <Mic size={18} />}
+        </button>
 
         <button 
           onClick={handleSend}
