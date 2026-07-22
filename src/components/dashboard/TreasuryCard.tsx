@@ -42,8 +42,8 @@ export function TreasuryCard({ savings, lastUpdated }: TreasuryCardProps) {
       className="relative p-5 rounded-xl bg-white border border-border-light transition-all duration-300"
       style={{
         boxShadow: animating
-          ? '0 0 0 3px rgba(99,91,255,0.2), 0 4px 16px rgba(99,91,255,0.15)'
-          : '0 2px 8px rgba(10,37,64,0.06)',
+          ? '0 0 0 3px rgba(13,148,136,0.2), 0 4px 16px rgba(13,148,136,0.15)'
+          : '0 2px 8px rgba(15,23,42,0.06)',
         borderBottom: '2px solid var(--gold)',
       }}
     >
@@ -51,7 +51,7 @@ export function TreasuryCard({ savings, lastUpdated }: TreasuryCardProps) {
         <h3 className={`text-stripe-muted font-medium text-sm ${language === 'hindi' ? 'font-hindi' : 'font-body'}`}>
           {language === 'hindi' ? 'कुल बचत (Jan Aushadhi)' : 'Total Savings (Jan Aushadhi)'}
         </h3>
-        <div className="p-1.5 rounded-full" style={{ background: 'rgba(196,154,26,0.1)' }}>
+        <div className="p-1.5 rounded-full" style={{ background: 'rgba(13,148,136,0.1)' }}>
           <IndianRupee className="w-5 h-5" style={{ color: 'var(--gold)' }} />
         </div>
       </div>

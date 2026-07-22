@@ -1,8 +1,10 @@
 'use client'
 
+import { motion, useReducedMotion } from 'framer-motion'
 import { Bot } from 'lucide-react'
 import { ChatMessage } from '@/types/chat'
 import { useLanguageStore } from '@/store/useLanguageStore'
+import { DURATION, EASE_OUT } from '@/lib/motion'
 
 interface MessageBubbleProps {
   message: ChatMessage
@@ -10,11 +12,19 @@ interface MessageBubbleProps {
 
 export function MessageBubble({ message }: MessageBubbleProps) {
   const { language } = useLanguageStore()
+  const reduce = useReducedMotion()
   const isUser = message.role === 'user'
+
+  // Messages arrive one at a time, so each animates once on mount.
+  const enter = {
+    initial: { opacity: 0, y: reduce ? 0 : 8 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: DURATION.base, ease: EASE_OUT },
+  }
 
   if (isUser) {
     return (
-      <div style={{
+      <motion.div {...enter} style={{
         display: 'flex',
         justifyContent: 'flex-end',
         marginBottom: '16px',
@@ -29,11 +39,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           gap: '4px'
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, #7A73FF 0%, #635BFF 100%)',
+            background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
             color: 'white',
             borderRadius: '16px 16px 4px 16px',
             padding: '16px',
-            boxShadow: '0 4px 12px rgba(99,91,255,0.12)'
+            boxShadow: '0 4px 12px rgba(13,148,136,0.12)'
           }}>
             {message.imageUrl && (
               // Base64 data-URI upload; next/image cannot optimize data URIs.
@@ -62,13 +72,13 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // AI Message - Prescription aesthetic
   return (
-    <div style={{
+    <motion.div {...enter} style={{
       display: 'flex',
       justifyContent: 'flex-start',
       marginBottom: '24px',
@@ -84,11 +94,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       }}>
         <div style={{
           background: 'white',
-          border: '1px solid rgba(10,37,64,0.06)',
-          borderTop: '3px solid #00D4FF',
+          border: '1px solid rgba(15,23,42,0.06)',
+          borderTop: '3px solid #14B8A6',
           borderRadius: '0 0 16px 16px',
           padding: '20px',
-          boxShadow: '0 4px 12px rgba(10,37,64,0.02)'
+          boxShadow: '0 4px 12px rgba(15,23,42,0.02)'
         }}>
           {/* Header area */}
           <div style={{
@@ -96,26 +106,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             alignItems: 'center',
             gap: '8px',
             paddingBottom: '10px',
-            borderBottom: '1px solid #E6EBF1',
+            borderBottom: '1px solid #E2E8F0',
             marginBottom: '16px'
           }}>
             <div style={{
               width: '30px',
               height: '30px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+              background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              boxShadow: '0 2px 6px rgba(99,91,255,0.15)'
+              boxShadow: '0 2px 6px rgba(13,148,136,0.15)'
             }}>
               <Bot size={16} />
             </div>
             <span style={{
               fontWeight: '700',
               fontSize: '14px',
-              color: '#0A2540'
+              color: '#0F172A'
             }}>
               Sehat Saathi
             </span>
@@ -123,7 +133,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           
           {/* Content area */}
           <div style={{
-            color: '#425466',
+            color: '#475569',
             fontSize: '15px',
             lineHeight: '1.6'
           }}>
@@ -133,7 +143,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 if (!line.includes('**')) return line
                 const parts = line.split('**')
                 return parts.map((part, index) => 
-                  index % 2 === 1 ? <strong key={index} style={{ color: '#0A2540', fontWeight: '700' }}>{part}</strong> : part
+                  index % 2 === 1 ? <strong key={index} style={{ color: '#0F172A', fontWeight: '700' }}>{part}</strong> : part
                 )
               }
               return (
@@ -149,6 +159,6 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

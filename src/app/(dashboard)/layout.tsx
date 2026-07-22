@@ -10,7 +10,7 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#EAEFF5', fontFamily: 'Inter, sans-serif' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#F8FAFC', fontFamily: 'Inter, sans-serif' }}>
       
       <style dangerouslySetInnerHTML={{__html: `
         @media (max-width: 768px) {

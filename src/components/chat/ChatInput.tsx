@@ -5,6 +5,7 @@ import { Send, Camera, Paperclip, X, Mic, MicOff } from 'lucide-react'
 import { toast } from 'sonner'
 import { useLanguageStore } from '@/store/useLanguageStore'
 import { useVoiceInput } from '@/hooks/useVoiceInput'
+import { prepareImageForUpload, approxBytesOfDataUrl, MAX_UPLOAD_BYTES } from '@/lib/image'
 
 interface ChatInputProps {
   onSendMessage: (text: string, imageBase64?: string) => void
@@ -17,7 +18,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   const [image, setImage] = useState<string | null>(null)
   const [baseMessage, setBaseMessage] = useState('')
   const [isFocused, setIsFocused] = useState(false)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const { isListening, transcript, startListening, stopListening, isSupported, error } = useVoiceInput(language === 'hindi' ? 'hi-IN' : 'en-IN')
@@ -73,19 +75,37 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
     }
   }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target
+    const file = input.files?.[0]
+    // Always clear the input so picking the same file twice still fires onChange.
+    input.value = ''
     if (!file) return
 
-    const reader = new FileReader()
-    reader.onload = (event) => {
-      setImage(event.target?.result as string)
+    if (file.size > MAX_UPLOAD_BYTES) {
+      toast.error(language === 'hindi'
+        ? 'Photo bahut badi hai. Kripya 15MB se chhoti photo bhejein.'
+        : 'That photo is too large. Please use an image under 15MB.')
+      return
     }
-    reader.readAsDataURL(file)
-    
-    // Reset input
-    if (fileInputRef.current) {
-      fileInputRef.current.value = ''
+
+    try {
+      // Phone photos are downscaled and re-encoded before they go over the wire.
+      const prepared = await prepareImageForUpload(file)
+
+      if (approxBytesOfDataUrl(prepared) > 4 * 1024 * 1024) {
+        toast.error(language === 'hindi'
+          ? 'Photo bahut badi hai. Kripya thodi chhoti photo lein.'
+          : 'That photo is still too large to send. Please try a smaller one.')
+        return
+      }
+
+      setImage(prepared)
+    } catch (err) {
+      console.error('Image upload failed:', err)
+      toast.error(language === 'hindi'
+        ? 'Photo padhne mein dikkat hui. Kripya dobara koshish karein.'
+        : 'Could not read that image. Please try again.')
     }
   }
 
@@ -98,8 +118,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   return (
     <div style={{
       width: '100%',
-      backgroundColor: '#FAFCFF',
-      borderTop: '1px solid #E6EBF1',
+      backgroundColor: '#F8FAFC',
+      borderTop: '1px solid #E2E8F0',
       padding: '16px',
       fontFamily: 'Inter, sans-serif'
     }}>
@@ -108,16 +128,16 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           transition: all 0.2s ease;
         }
         .chat-icon-btn:hover:not(:disabled) {
-          background-color: #F4F4FF !important;
-          color: #635BFF !important;
+          background-color: #CCFBF1 !important;
+          color: #0D9488 !important;
         }
         .chat-send-btn {
           transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .chat-send-btn:hover:not(:disabled) {
-          background-color: #5249F5 !important;
+          background-color: #0F766E !important;
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(99,91,255,0.25);
+          box-shadow: 0 4px 12px rgba(13,148,136,0.25);
         }
         .chat-send-btn:active:not(:disabled) {
           transform: translateY(0);
@@ -130,8 +150,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
       `}} />
 
       {isListening && (
-        <div style={{ fontSize: '13px', color: '#E02424', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: '#E02424', borderRadius: '50%', animation: 'pulse-ring 1s infinite' }} />
+        <div style={{ fontSize: '13px', color: '#DC2626', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: '#DC2626', borderRadius: '50%', animation: 'pulse-ring 1s infinite' }} />
           {language === 'hindi' ? '🎙 सुन रहा हूँ...' : '🎙 Listening...'}
         </div>
       )}
@@ -151,7 +171,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               height: '80px',
               width: 'auto',
               borderRadius: '12px',
-              border: '1px solid #E6EBF1',
+              border: '1px solid #E2E8F0',
               objectFit: 'cover'
             }}
           />
@@ -161,7 +181,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               position: 'absolute',
               top: '-8px',
               right: '-8px',
-              backgroundColor: '#E02424',
+              backgroundColor: '#DC2626',
               color: 'white',
               border: 'none',
               borderRadius: '50%',
@@ -184,21 +204,22 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
         alignItems: 'flex-end',
         gap: '6px',
         backgroundColor: 'white',
-        border: isFocused ? '1px solid #635BFF' : '1px solid #E6EBF1',
+        border: isFocused ? '1px solid #0D9488' : '1px solid #E2E8F0',
         borderRadius: '16px',
         padding: '6px 12px',
-        boxShadow: isFocused ? '0 0 0 4px rgba(99,91,255,0.1)' : '0 4px 12px rgba(10,37,64,0.02)',
+        boxShadow: isFocused ? '0 0 0 4px rgba(13,148,136,0.1)' : '0 4px 12px rgba(15,23,42,0.02)',
         transition: 'all 0.2s ease'
       }}>
         <button 
           className="chat-icon-btn"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => cameraInputRef.current?.click()}
           disabled={disabled}
+          title={language === 'hindi' ? 'Camera se photo lein' : 'Take a photo'}
           style={{
             padding: '10px',
             border: 'none',
             background: 'transparent',
-            color: '#8898AA',
+            color: '#94A3B8',
             cursor: 'pointer',
             borderRadius: '10px',
             display: 'flex',
@@ -212,16 +233,17 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
         </button>
         <button 
           className="chat-icon-btn"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => galleryInputRef.current?.click()}
           disabled={disabled}
+          title={language === 'hindi' ? 'Gallery se chunein' : 'Choose from gallery'}
           style={{
             padding: '10px',
             border: 'none',
             background: 'transparent',
-            color: '#8898AA',
+            color: '#94A3B8',
             cursor: 'pointer',
             borderRadius: '10px',
-            display: 'none', // Shown as flex on larger screen view
+            display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             outline: 'none',
@@ -232,11 +254,21 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           <Paperclip size={20} />
         </button>
         
-        <input 
-          type="file" 
-          accept="image/*" 
-          style={{ display: 'none' }} 
-          ref={fileInputRef}
+        {/* capture="environment" makes mobile open the rear camera directly. */}
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          style={{ display: 'none' }}
+          ref={cameraInputRef}
+          onChange={handleImageUpload}
+        />
+        {/* No capture attribute, so this one always opens the gallery/file picker. */}
+        <input
+          type="file"
+          accept="image/*"
+          style={{ display: 'none' }}
+          ref={galleryInputRef}
           onChange={handleImageUpload}
         />
 
@@ -258,7 +290,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             outline: 'none',
             padding: '10px 4px',
             fontSize: '15px',
-            color: '#0A2540',
+            color: '#0F172A',
             fontWeight: '500',
             resize: 'none',
             lineHeight: '1.4'
@@ -279,8 +311,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              backgroundColor: isListening ? '#E02424' : 'transparent',
-              color: isListening ? 'white' : '#8898AA',
+              backgroundColor: isListening ? '#DC2626' : 'transparent',
+              color: isListening ? 'white' : '#94A3B8',
               outline: 'none',
               flexShrink: 0,
               position: 'relative'
@@ -292,7 +324,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
                 position: 'absolute',
                 inset: 0,
                 borderRadius: '12px',
-                border: '2px solid #E02424',
+                border: '2px solid #DC2626',
                 animation: 'pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite'
               }} />
             )}
@@ -313,11 +345,11 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: isBtnDisabled ? 'not-allowed' : 'pointer',
-            backgroundColor: isBtnDisabled ? '#F6F9FC' : '#635BFF',
-            color: isBtnDisabled ? '#8898AA' : 'white',
+            backgroundColor: isBtnDisabled ? '#F8FAFC' : '#0D9488',
+            color: isBtnDisabled ? '#94A3B8' : 'white',
             outline: 'none',
             flexShrink: 0,
-            boxShadow: isBtnDisabled ? 'none' : '0 4px 12px rgba(99,91,255,0.2)'
+            boxShadow: isBtnDisabled ? 'none' : '0 4px 12px rgba(13,148,136,0.2)'
           }}
         >
           <Send size={18} />

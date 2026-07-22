@@ -26,7 +26,7 @@ export function LanguageToggle() {
           padding: '6px 16px',
           fontSize: '14px',
           fontWeight: language === 'hindi' ? '700' : '500',
-          color: language === 'hindi' ? '#635BFF' : '#64748B',
+          color: language === 'hindi' ? '#0D9488' : '#475569',
           background: 'transparent',
           border: 'none',
           borderRadius: '10px',
@@ -44,7 +44,7 @@ export function LanguageToggle() {
               inset: 0,
               background: 'white',
               borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(99,91,255,0.15)',
+              boxShadow: '0 2px 8px rgba(13,148,136,0.15)',
               zIndex: -1
             }}
             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -60,7 +60,7 @@ export function LanguageToggle() {
           padding: '6px 16px',
           fontSize: '14px',
           fontWeight: language === 'english' ? '700' : '500',
-          color: language === 'english' ? '#635BFF' : '#64748B',
+          color: language === 'english' ? '#0D9488' : '#475569',
           background: 'transparent',
           border: 'none',
           borderRadius: '10px',
@@ -78,7 +78,7 @@ export function LanguageToggle() {
               inset: 0,
               background: 'white',
               borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(99,91,255,0.15)',
+              boxShadow: '0 2px 8px rgba(13,148,136,0.15)',
               zIndex: -1
             }}
             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}

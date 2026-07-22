@@ -21,8 +21,8 @@ export function FloatingAIButton() {
         width: '56px',
         height: '56px',
         borderRadius: '28px',
-        background: 'linear-gradient(135deg, #635BFF 0%, #00D4FF 100%)',
-        boxShadow: '0 8px 24px rgba(99,91,255,0.4)',
+        background: 'linear-gradient(135deg, #0D9488 0%, #14B8A6 100%)',
+        boxShadow: '0 8px 24px rgba(13,148,136,0.4)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -36,7 +36,7 @@ export function FloatingAIButton() {
       <style dangerouslySetInnerHTML={{__html: `
         .floating-ai-button:active {
           transform: scale(0.92);
-          box-shadow: 0 4px 12px rgba(99,91,255,0.3);
+          box-shadow: 0 4px 12px rgba(13,148,136,0.3);
         }
         .floating-ai-button:hover {
           transform: scale(1.05);
@@ -44,7 +44,7 @@ export function FloatingAIButton() {
         .floating-ai-tooltip {
           position: absolute;
           right: 70px;
-          background: #0A2540;
+          background: #0F172A;
           color: white;
           padding: 6px 12px;
           border-radius: 8px;
@@ -55,7 +55,7 @@ export function FloatingAIButton() {
           transition: all 0.2s ease;
           white-space: nowrap;
           pointer-events: none;
-          box-shadow: 0 4px 12px rgba(10,37,64,0.1);
+          box-shadow: 0 4px 12px rgba(15,23,42,0.1);
         }
         .floating-ai-button:hover .floating-ai-tooltip {
           opacity: 1;

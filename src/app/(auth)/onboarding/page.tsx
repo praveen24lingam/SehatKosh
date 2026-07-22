@@ -7,8 +7,7 @@ import {
   ArrowRight, User, Calendar, Activity, 
   Heart, Flame, Coffee, Target, ShieldCheck
 } from 'lucide-react'
-import { useAuthStore } from '@/store/useAuthStore'
-import { createClient } from '@/lib/supabase/client'
+import { useUserStore } from '@/store/useUserStore'
 
 const steps = [
   { id: 1, title: 'Welcome' },
@@ -22,7 +21,7 @@ const steps = [
 
 export default function OnboardingPage() {
   const router = useRouter()
-  const { user, setUser } = useAuthStore()
+  const { user, setUser } = useUserStore()
   
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -69,31 +68,7 @@ export default function OnboardingPage() {
     setErrorMsg('')
     setIsSubmitting(true)
     try {
-      const supabase = createClient()
-      
-      const { data: userData, error } = await supabase.auth.updateUser({
-        data: { 
-          full_name: formData.name,
-          onboarding_data: formData 
-        }
-      })
-
-      if (error) throw error
-
-      if (userData?.user) {
-        // Safety net: ensure user exists in public.users table
-        const { error: insertError } = await supabase.from('users').insert({
-          id: userData.user.id,
-          email: userData.user.email,
-        })
-        if (insertError && insertError.code !== '23505') {
-          console.error("Failed to insert user into users table", insertError)
-        }
-      }
-
-      if (user) {
-        setUser({ ...user, name: formData.name })
-      }
+      setUser({ ...user, name: formData.name || user.name })
       router.push('/dashboard')
     } catch (error: unknown) {
       console.error('Failed to update profile:', error)
@@ -111,7 +86,7 @@ export default function OnboardingPage() {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    backgroundColor: '#635BFF',
+    backgroundColor: '#0D9488',
     color: 'white',
     border: 'none',
     borderRadius: '12px',
@@ -128,9 +103,9 @@ export default function OnboardingPage() {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '8px',
-    backgroundColor: '#F6F9FC',
-    color: '#425466',
-    border: '1px solid #E6EBF1',
+    backgroundColor: '#F8FAFC',
+    color: '#475569',
+    border: '1px solid #E2E8F0',
     borderRadius: '12px',
     fontWeight: '700',
     fontSize: '15px',
@@ -140,8 +115,8 @@ export default function OnboardingPage() {
 
   const getPrimaryBtnStyle = (disabled: boolean): React.CSSProperties => ({
     ...primaryBtnStyle,
-    backgroundColor: disabled ? '#E6EBF1' : '#635BFF',
-    color: disabled ? '#8898AA' : 'white',
+    backgroundColor: disabled ? '#E2E8F0' : '#0D9488',
+    color: disabled ? '#94A3B8' : 'white',
     cursor: disabled ? 'not-allowed' : 'pointer'
   })
 
@@ -159,22 +134,22 @@ export default function OnboardingPage() {
       style={{
         padding: '16px',
         borderRadius: '12px',
-        border: selected ? '2px solid #635BFF' : '2px solid #E6EBF1',
-        backgroundColor: selected ? '#F4F4FF' : 'white',
+        border: selected ? '2px solid #0D9488' : '2px solid #E2E8F0',
+        backgroundColor: selected ? '#CCFBF1' : 'white',
         cursor: 'pointer',
         transition: 'all 0.2s ease',
         display: 'flex',
         alignItems: 'start',
         gap: '16px',
-        boxShadow: selected ? '0 4px 12px rgba(99,91,255,0.08)' : 'none'
+        boxShadow: selected ? '0 4px 12px rgba(13,148,136,0.08)' : 'none'
       }}
       className="hover-lift"
     >
       <div style={{
         padding: '8px',
         borderRadius: '8px',
-        backgroundColor: selected ? '#635BFF' : '#F6F9FC',
-        color: selected ? 'white' : '#8898AA',
+        backgroundColor: selected ? '#0D9488' : '#F8FAFC',
+        color: selected ? 'white' : '#94A3B8',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -185,11 +160,11 @@ export default function OnboardingPage() {
         <div style={{
           fontWeight: '700',
           fontSize: '15px',
-          color: selected ? '#635BFF' : '#0A2540'
+          color: selected ? '#0D9488' : '#0F172A'
         }}>{title}</div>
         <div style={{
           fontSize: '13px',
-          color: '#425466',
+          color: '#475569',
           marginTop: '4px',
           lineHeight: '1.4'
         }}>{desc}</div>
@@ -206,26 +181,26 @@ export default function OnboardingPage() {
               <div style={{
                 width: '80px',
                 height: '80px',
-                background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+                background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
                 borderRadius: '50%',
                 margin: '0 auto 24px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                boxShadow: '0 8px 24px rgba(99,91,255,0.25)'
+                boxShadow: '0 8px 24px rgba(13,148,136,0.25)'
               }}>
                 <Heart size={32} />
               </div>
               <h2 style={{
                 fontSize: '28px',
                 fontWeight: '800',
-                color: '#0A2540',
+                color: '#0F172A',
                 letterSpacing: '-1px',
                 marginBottom: '12px'
               }}>Welcome to SehatKosh</h2>
               <p style={{
-                color: '#425466',
+                color: '#475569',
                 fontSize: '16px',
                 lineHeight: '1.6',
                 maxWidth: '400px',
@@ -243,51 +218,51 @@ export default function OnboardingPage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>Personal Details</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>Basic information about you.</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>Personal Details</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>Basic information about you.</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Full Name</label>
-                <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
-                  <User size={18} style={{ color: '#8898AA', marginRight: '12px' }} />
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Full Name</label>
+                <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
+                  <User size={18} style={{ color: '#94A3B8', marginRight: '12px' }} />
                   <input 
                     type="text" 
                     value={formData.name} 
                     onChange={e => updateData('name', e.target.value)} 
                     placeholder="Apna naam likhein..." 
-                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500' }} 
+                    style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500' }} 
                   />
                 </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Age</label>
-                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
-                    <Calendar size={18} style={{ color: '#8898AA', marginRight: '12px' }} />
+                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Age</label>
+                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
+                    <Calendar size={18} style={{ color: '#94A3B8', marginRight: '12px' }} />
                     <input 
                       type="number" 
                       value={formData.age} 
                       onChange={e => updateData('age', e.target.value)} 
                       placeholder="e.g. 30" 
-                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500' }} 
+                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500' }} 
                     />
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Gender</label>
-                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px', position: 'relative' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Gender</label>
+                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px', position: 'relative' }}>
                     <select 
                       value={formData.gender} 
                       onChange={e => updateData('gender', e.target.value)} 
-                      style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500', appearance: 'none', cursor: 'pointer' }}
+                      style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500', appearance: 'none', cursor: 'pointer' }}
                     >
                       <option value="" disabled>Select...</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
                     </select>
-                    <div style={{ position: 'absolute', right: '16px', pointerEvents: 'none', color: '#8898AA', fontSize: '12px' }}>▼</div>
+                    <div style={{ position: 'absolute', right: '16px', pointerEvents: 'none', color: '#94A3B8', fontSize: '12px' }}>▼</div>
                   </div>
                 </div>
               </div>
@@ -309,50 +284,50 @@ export default function OnboardingPage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>Health Profile</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>Help us calculate your BMI and insights.</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>Health Profile</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>Help us calculate your BMI and insights.</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Height (cm)</label>
-                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Height (cm)</label>
+                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
                     <input 
                       type="number" 
                       value={formData.height} 
                       onChange={e => updateData('height', e.target.value)} 
                       placeholder="170" 
-                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500' }} 
+                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500' }} 
                     />
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Weight (kg)</label>
-                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
+                  <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Weight (kg)</label>
+                  <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
                     <input 
                       type="number" 
                       value={formData.weight} 
                       onChange={e => updateData('weight', e.target.value)} 
                       placeholder="70" 
-                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500' }} 
+                      style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500' }} 
                     />
                   </div>
                 </div>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Blood Group</label>
-                <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px', position: 'relative' }}>
+                <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Blood Group</label>
+                <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px', position: 'relative' }}>
                   <select 
                     value={formData.bloodGroup} 
                     onChange={e => updateData('bloodGroup', e.target.value)} 
-                    style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500', appearance: 'none', cursor: 'pointer' }}
+                    style={{ width: '100%', border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500', appearance: 'none', cursor: 'pointer' }}
                   >
                     <option value="" disabled>Select...</option>
                     {['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(bg => (
                       <option key={bg} value={bg}>{bg}</option>
                     ))}
                   </select>
-                  <div style={{ position: 'absolute', right: '16px', pointerEvents: 'none', color: '#8898AA', fontSize: '12px' }}>▼</div>
+                  <div style={{ position: 'absolute', right: '16px', pointerEvents: 'none', color: '#94A3B8', fontSize: '12px' }}>▼</div>
                 </div>
               </div>
             </div>
@@ -366,8 +341,8 @@ export default function OnboardingPage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>Lifestyle</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>Daily habits shape your health.</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>Lifestyle</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>Daily habits shape your health.</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <OptionCard 
@@ -396,8 +371,8 @@ export default function OnboardingPage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>Medical History</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>Select any existing conditions.</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>Medical History</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>Select any existing conditions.</p>
             </div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
               {['Diabetes', 'Hypertension', 'Asthma', 'Thyroid', 'Cholesterol', 'None'].map(condition => {
@@ -409,9 +384,9 @@ export default function OnboardingPage() {
                     style={{
                       padding: '8px 16px',
                       borderRadius: '999px',
-                      border: isSelected ? '1px solid #635BFF' : '1px solid #E6EBF1',
-                      backgroundColor: isSelected ? '#635BFF' : 'white',
-                      color: isSelected ? 'white' : '#425466',
+                      border: isSelected ? '1px solid #0D9488' : '1px solid #E2E8F0',
+                      backgroundColor: isSelected ? '#0D9488' : 'white',
+                      color: isSelected ? 'white' : '#475569',
                       fontWeight: '700',
                       fontSize: '14px',
                       cursor: 'pointer',
@@ -426,14 +401,14 @@ export default function OnboardingPage() {
               })}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '16px' }}>
-              <label style={{ fontSize: '13px', fontWeight: '700', color: '#0A2540' }}>Any Allergies? (Optional)</label>
-              <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E6EBF1', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
+              <label style={{ fontSize: '13px', fontWeight: '700', color: '#0F172A' }}>Any Allergies? (Optional)</label>
+              <div className="premium-input-container" style={{ display: 'flex', alignItems: 'center', border: '1px solid #E2E8F0', borderRadius: '12px', background: 'white', padding: '0 16px', height: '48px' }}>
                 <input 
                   type="text" 
                   value={formData.allergies} 
                   onChange={e => updateData('allergies', e.target.value)} 
                   placeholder="E.g. Peanuts, Penicillin..." 
-                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0A2540', fontWeight: '500' }} 
+                  style={{ flex: 1, border: 'none', background: 'transparent', outline: 'none', fontSize: '15px', color: '#0F172A', fontWeight: '500' }} 
                 />
               </div>
             </div>
@@ -447,8 +422,8 @@ export default function OnboardingPage() {
         return (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
             <div style={{ textAlign: 'center', marginBottom: '8px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>Your Goal</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>What do you want to achieve?</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>Your Goal</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>What do you want to achieve?</p>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               <OptionCard 
@@ -480,36 +455,36 @@ export default function OnboardingPage() {
               <div style={{
                 width: '64px',
                 height: '64px',
-                backgroundColor: 'rgba(0, 217, 36, 0.1)',
-                color: '#00D924',
+                backgroundColor: 'rgba(13,148,136, 0.1)',
+                color: '#0D9488',
                 borderRadius: '50%',
                 margin: '0 auto 16px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0, 217, 36, 0.1)'
+                boxShadow: '0 4px 12px rgba(13,148,136, 0.1)'
               }}>
                 <ShieldCheck size={32} />
               </div>
-              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0A2540', letterSpacing: '-0.5px', marginBottom: '8px' }}>All Set, {formData.name || 'Friend'}!</h2>
-              <p style={{ color: '#425466', fontSize: '15px' }}>Review your details before finishing.</p>
+              <h2 style={{ fontSize: '24px', fontWeight: '800', color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '8px' }}>All Set, {formData.name || 'Friend'}!</h2>
+              <p style={{ color: '#475569', fontSize: '15px' }}>Review your details before finishing.</p>
             </div>
-            <div style={{ backgroundColor: '#FAFCFF', border: '1px solid #E6EBF1', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E6EBF1', paddingBottom: '8px' }}>
-                <span style={{ color: '#8898AA', fontWeight: '500' }}>Age & Gender</span>
-                <span style={{ color: '#0A2540', fontWeight: '700' }}>{formData.age || '-'} / {formData.gender ? formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1) : '-'}</span>
+            <div style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '14px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>
+                <span style={{ color: '#94A3B8', fontWeight: '500' }}>Age & Gender</span>
+                <span style={{ color: '#0F172A', fontWeight: '700' }}>{formData.age || '-'} / {formData.gender ? formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1) : '-'}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E6EBF1', paddingBottom: '8px' }}>
-                <span style={{ color: '#8898AA', fontWeight: '500' }}>BMI Metrics</span>
-                <span style={{ color: '#0A2540', fontWeight: '700' }}>{formData.height || '-'} cm / {formData.weight || '-'} kg</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #E2E8F0', paddingBottom: '8px' }}>
+                <span style={{ color: '#94A3B8', fontWeight: '500' }}>BMI Metrics</span>
+                <span style={{ color: '#0F172A', fontWeight: '700' }}>{formData.height || '-'} cm / {formData.weight || '-'} kg</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span style={{ color: '#8898AA', fontWeight: '500' }}>Primary Goal</span>
-                <span style={{ color: '#0A2540', fontWeight: '700', textTransform: 'capitalize' }}>{formData.primaryGoal ? formData.primaryGoal.replace('_', ' ') : '-'}</span>
+                <span style={{ color: '#94A3B8', fontWeight: '500' }}>Primary Goal</span>
+                <span style={{ color: '#0F172A', fontWeight: '700', textTransform: 'capitalize' }}>{formData.primaryGoal ? formData.primaryGoal.replace('_', ' ') : '-'}</span>
               </div>
             </div>
             {errorMsg && (
-              <div style={{ padding: '12px', backgroundColor: '#FFF0F0', border: '1px solid #FFCDD2', borderRadius: '8px', fontSize: '13px', color: '#E02424', fontWeight: '600', textAlign: 'center' }}>
+              <div style={{ padding: '12px', backgroundColor: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '8px', fontSize: '13px', color: '#DC2626', fontWeight: '600', textAlign: 'center' }}>
                 {errorMsg}
               </div>
             )}
@@ -532,7 +507,7 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div style={{ background: '#EAEFF5', fontFamily: 'Inter, sans-serif', color: '#0A2540', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
+    <div style={{ background: '#F8FAFC', fontFamily: 'Inter, sans-serif', color: '#0F172A', minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', overflow: 'hidden' }}>
       
       <style dangerouslySetInnerHTML={{__html: `
         @keyframes float {
@@ -548,15 +523,15 @@ export default function OnboardingPage() {
         }
         .hover-lift:hover {
           transform: translateY(-2px);
-          box-shadow: 0 8px 16px rgba(10,37,64,0.06) !important;
+          box-shadow: 0 8px 16px rgba(15,23,42,0.06) !important;
         }
         
         .premium-input-container {
           transition: all 0.2s ease;
         }
         .premium-input-container:focus-within {
-          border-color: #635BFF !important;
-          box-shadow: 0 0 0 1px #635BFF !important;
+          border-color: #0D9488 !important;
+          box-shadow: 0 0 0 1px #0D9488 !important;
         }
         
         .premium-btn {
@@ -564,11 +539,11 @@ export default function OnboardingPage() {
         }
         .premium-btn:hover:not(:disabled) {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(99,91,255,0.25);
+          box-shadow: 0 6px 20px rgba(13,148,136,0.25);
         }
         .premium-btn:active:not(:disabled) {
           transform: translateY(0);
-          box-shadow: 0 2px 8px rgba(99,91,255,0.15);
+          box-shadow: 0 2px 8px rgba(13,148,136,0.15);
         }
       `}} />
 
@@ -583,12 +558,12 @@ export default function OnboardingPage() {
       {/* Decorative Gradient Blobs */}
       <div style={{
         position: 'absolute', top: '-10%', right: '-5%', width: '700px', height: '500px',
-        background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+        background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
         transform: 'rotate(-15deg)', opacity: 0.15, filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none', borderRadius: '100px'
       }}></div>
       <div style={{
         position: 'absolute', bottom: '-10%', left: '-5%', width: '600px', height: '400px',
-        background: 'linear-gradient(135deg, #00D4FF 0%, #7A73FF 100%)',
+        background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
         transform: 'rotate(15deg)', opacity: 0.1, filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none', borderRadius: '100px'
       }}></div>
 
@@ -607,7 +582,7 @@ export default function OnboardingPage() {
                   borderRadius: '3px',
                   transition: 'all 0.3s ease',
                   width: isActive ? '32px' : '16px',
-                  backgroundColor: isActive ? '#635BFF' : isCompleted ? 'rgba(99, 91, 255, 0.6)' : '#E6EBF1'
+                  backgroundColor: isActive ? '#0D9488' : isCompleted ? 'rgba(13,148,136, 0.6)' : '#E2E8F0'
                 }}
               />
             )
@@ -618,8 +593,8 @@ export default function OnboardingPage() {
         <div style={{
           background: 'white',
           borderRadius: '24px',
-          border: '1px solid #E6EBF1',
-          boxShadow: '0 32px 64px rgba(10, 37, 64, 0.08)',
+          border: '1px solid #E2E8F0',
+          boxShadow: '0 32px 64px rgba(15,23,42, 0.08)',
           padding: '48px 40px',
           position: 'relative',
           overflow: 'hidden'
@@ -643,13 +618,13 @@ export default function OnboardingPage() {
             style={{
               background: 'transparent',
               border: 'none',
-              color: '#8898AA',
+              color: '#94A3B8',
               fontSize: '14px',
               fontWeight: '700',
               cursor: 'pointer',
               transition: 'color 0.2s'
             }}
-            className="hover:text-[#0A2540]"
+            className="hover:text-[#0F172A]"
           >
             Skip for now
           </button>

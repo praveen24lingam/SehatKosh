@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { Bell, Activity } from 'lucide-react'
-import { useAuthStore } from '@/store/useAuthStore'
+import { useUserStore } from '@/store/useUserStore'
 
 export function TopHeader() {
-  const { user } = useAuthStore()
+  const { user } = useUserStore()
 
   return (
     <header className="mobile-flex" style={{
@@ -15,12 +15,12 @@ export function TopHeader() {
       width: '100%',
       height: '72px',
       backgroundColor: 'white',
-      borderBottom: '1px solid #E6EBF1',
+      borderBottom: '1px solid #E2E8F0',
       display: 'none', // Overridden to display: flex by mobile-flex in mobile view
       alignItems: 'center',
       justifyContent: 'space-between',
       padding: '0 16px',
-      boxShadow: '0 4px 20px rgba(10,37,64,0.02)',
+      boxShadow: '0 4px 20px rgba(15,23,42,0.02)',
       fontFamily: 'Inter, sans-serif'
     }}>
       <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
@@ -28,16 +28,16 @@ export function TopHeader() {
           width: '32px',
           height: '32px',
           borderRadius: '8px',
-          background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+          background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: 'white',
-          boxShadow: '0 2px 4px rgba(99,91,255,0.2)'
+          boxShadow: '0 2px 4px rgba(13,148,136,0.2)'
         }}>
           <Activity size={18} />
         </div>
-        <span style={{ fontWeight: '800', fontSize: '20px', color: '#0A2540', letterSpacing: '-0.5px' }}>SehatKosh</span>
+        <span style={{ fontWeight: '800', fontSize: '20px', color: '#0F172A', letterSpacing: '-0.5px' }}>SehatKosh</span>
       </Link>
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
@@ -46,7 +46,7 @@ export function TopHeader() {
           padding: '8px',
           border: 'none',
           background: 'transparent',
-          color: '#8898AA',
+          color: '#94A3B8',
           cursor: 'pointer',
           borderRadius: '50%',
           display: 'flex',
@@ -60,7 +60,7 @@ export function TopHeader() {
             right: '4px',
             width: '8px',
             height: '8px',
-            backgroundColor: '#E02424',
+            backgroundColor: '#0D9488',
             borderRadius: '50%',
             border: '2px solid white'
           }}></span>
@@ -73,12 +73,12 @@ export function TopHeader() {
           width: '36px',
           height: '36px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+          background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
           color: 'white',
           textDecoration: 'none',
           fontWeight: '700',
           fontSize: '14px',
-          boxShadow: '0 2px 4px rgba(99,91,255,0.2)'
+          boxShadow: '0 2px 4px rgba(13,148,136,0.2)'
         }}>
           {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
         </Link>

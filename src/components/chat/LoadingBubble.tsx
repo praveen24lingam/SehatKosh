@@ -1,10 +1,18 @@
 'use client'
 
+import { motion, useReducedMotion } from 'framer-motion'
 import { Bot } from 'lucide-react'
+import { DURATION, EASE_OUT } from '@/lib/motion'
 
 export function LoadingBubble() {
+  const reduce = useReducedMotion()
+
   return (
-    <div style={{
+    <motion.div
+      initial={{ opacity: 0, y: reduce ? 0 : 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: DURATION.base, ease: EASE_OUT }}
+      style={{
       display: 'flex',
       justifyContent: 'flex-start',
       marginBottom: '24px',
@@ -12,17 +20,24 @@ export function LoadingBubble() {
       fontFamily: 'Inter, sans-serif'
     }}>
       <style dangerouslySetInnerHTML={{__html: `
-        @keyframes chatBounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-6px); }
+        @keyframes chatThinking {
+          0%, 100% { transform: translateY(0); opacity: 0.45; }
+          50% { transform: translateY(-3px); opacity: 1; }
         }
         .chat-loading-dot {
-          width: 8px;
-          height: 8px;
-          background-color: #635BFF;
+          width: 7px;
+          height: 7px;
+          background-color: #0D9488;
           border-radius: 50%;
           display: inline-block;
-          animation: chatBounce 1.2s infinite ease-in-out;
+          animation: chatThinking 1.3s infinite ease-in-out;
+        }
+        /* Keep a legible resting state rather than a frozen mid-bounce dot. */
+        @media (prefers-reduced-motion: reduce) {
+          .chat-loading-dot {
+            animation: none;
+            opacity: 0.55;
+          }
         }
         .chat-dot-1 { animation-delay: -0.3s; }
         .chat-dot-2 { animation-delay: -0.15s; }
@@ -37,11 +52,11 @@ export function LoadingBubble() {
       }}>
         <div style={{
           background: 'white',
-          border: '1px solid rgba(10,37,64,0.06)',
-          borderTop: '3px solid #00D4FF',
+          border: '1px solid rgba(15,23,42,0.06)',
+          borderTop: '3px solid #14B8A6',
           borderRadius: '0 0 16px 16px',
           padding: '20px',
-          boxShadow: '0 4px 12px rgba(10,37,64,0.02)'
+          boxShadow: '0 4px 12px rgba(15,23,42,0.02)'
         }}>
           {/* Header area */}
           <div style={{
@@ -49,26 +64,26 @@ export function LoadingBubble() {
             alignItems: 'center',
             gap: '8px',
             paddingBottom: '10px',
-            borderBottom: '1px solid #E6EBF1',
+            borderBottom: '1px solid #E2E8F0',
             marginBottom: '16px'
           }}>
             <div style={{
               width: '30px',
               height: '30px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+              background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              boxShadow: '0 2px 6px rgba(99,91,255,0.15)'
+              boxShadow: '0 2px 6px rgba(13,148,136,0.15)'
             }}>
               <Bot size={16} />
             </div>
             <span style={{
               fontWeight: '700',
               fontSize: '14px',
-              color: '#0A2540'
+              color: '#0F172A'
             }}>
               Sehat Saathi
             </span>
@@ -82,6 +97,6 @@ export function LoadingBubble() {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }

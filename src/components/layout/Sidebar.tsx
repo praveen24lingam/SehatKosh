@@ -2,20 +2,18 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, MessageCircle, Users, Bell, Settings, LogOut, Activity } from 'lucide-react'
-import { useAuthStore } from '@/store/useAuthStore'
+import { Home, MessageCircle, Settings, Activity } from 'lucide-react'
+import { useUserStore } from '@/store/useUserStore'
 import { useLanguageStore } from '@/store/useLanguageStore'
 
 export function Sidebar() {
   const pathname = usePathname()
-  const { user, logout } = useAuthStore()
+  const { user } = useUserStore()
   const { language } = useLanguageStore()
 
   const navItems = [
     { href: '/dashboard', icon: Home,          labelEn: 'Home',      labelHi: 'होम' },
     { href: '/chat',      icon: MessageCircle, labelEn: 'AI Chat',   labelHi: 'एआई चैट' },
-    { href: '/family',    icon: Users,         labelEn: 'Family',    labelHi: 'परिवार' },
-    { href: '/reminders', icon: Bell,          labelEn: 'Reminders', labelHi: 'दवा याद' },
     { href: '/settings',  icon: Settings,      labelEn: 'Settings',  labelHi: 'सेटिंग्स' },
   ]
 
@@ -23,8 +21,8 @@ export function Sidebar() {
     <aside className="desktop-flex" style={{
       width: '280px',
       height: '100vh',
-      backgroundColor: '#FAFCFF',
-      borderRight: '1px solid rgba(10,37,64,0.06)',
+      backgroundColor: '#F8FAFC',
+      borderRight: '1px solid rgba(15,23,42,0.06)',
       position: 'sticky',
       top: 0,
       flexDirection: 'column',
@@ -36,24 +34,16 @@ export function Sidebar() {
         }
         .sidebar-link:hover:not(.active) {
           background-color: white !important;
-          color: #635BFF !important;
-          transform: translateX(4px);
-          box-shadow: 0 4px 12px rgba(10,37,64,0.04);
-        }
-        .logout-btn {
-          transition: all 0.2s ease;
-        }
-        .logout-btn:hover {
-          background-color: #FFF0F0 !important;
-          color: #E02424 !important;
-          transform: scale(1.05);
+          color: #0D9488 !important;
+          transform: translateX(2px);
+          box-shadow: 0 4px 12px rgba(15,23,42,0.04);
         }
         .profile-card {
           transition: transform 0.2s;
         }
         .profile-card:hover {
           transform: translateY(-2px);
-          box-shadow: 0 12px 24px rgba(10,37,64,0.06) !important;
+          box-shadow: 0 12px 24px rgba(15,23,42,0.06) !important;
         }
       `}} />
 
@@ -64,16 +54,16 @@ export function Sidebar() {
             width: '40px',
             height: '40px',
             borderRadius: '12px',
-            background: 'linear-gradient(135deg, #7A73FF 0%, #00D4FF 100%)',
+            background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             color: 'white',
-            boxShadow: '0 8px 20px rgba(99,91,255,0.35)'
+            boxShadow: '0 8px 20px rgba(13,148,136,0.35)'
           }}>
             <Activity size={22} strokeWidth={2.5} />
           </div>
-          <span style={{ fontWeight: '800', fontSize: '24px', color: '#0A2540', letterSpacing: '-1px' }}>
+          <span style={{ fontWeight: '800', fontSize: '24px', color: '#0F172A', letterSpacing: '-1px' }}>
             SehatKosh
           </span>
         </Link>
@@ -99,16 +89,16 @@ export function Sidebar() {
               style={{
                 display: 'flex',
                 alignItems: 'center',
-                gap: '14px',
-                padding: '12px 18px',
-                borderRadius: '16px',
+                gap: '12px',
+                padding: '12px 16px',
+                borderRadius: '12px',
                 textDecoration: 'none',
                 cursor: 'pointer',
                 backgroundColor: isActive ? 'white' : 'transparent',
-                color: isActive ? '#635BFF' : '#425466',
+                color: isActive ? '#0D9488' : '#475569',
                 fontWeight: isActive ? '700' : '500',
-                border: isActive ? '1px solid rgba(99,91,255,0.1)' : '1px solid transparent',
-                boxShadow: isActive ? '0 8px 24px rgba(99,91,255,0.12)' : 'none',
+                border: isActive ? '1px solid rgba(13,148,136,0.1)' : '1px solid transparent',
+                boxShadow: isActive ? '0 6px 16px rgba(13,148,136,0.10)' : 'none',
                 position: 'relative',
                 overflow: 'hidden'
               }}
@@ -121,11 +111,11 @@ export function Sidebar() {
                   transform: 'translateY(-50%)',
                   width: '4px',
                   height: '60%',
-                  backgroundColor: '#635BFF',
+                  backgroundColor: '#0D9488',
                   borderRadius: '0 4px 4px 0'
                 }} />
               )}
-              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} style={{ flexShrink: 0, color: isActive ? '#635BFF' : '#8898AA' }} />
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 2} style={{ flexShrink: 0, color: isActive ? '#0D9488' : '#94A3B8' }} />
               <span style={{ fontSize: '15px' }} className={language === 'hindi' ? 'font-hindi' : ''}>
                 {language === 'hindi' ? item.labelHi : item.labelEn}
               </span>
@@ -141,12 +131,11 @@ export function Sidebar() {
           style={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
             padding: '12px',
-            borderRadius: '20px',
+            borderRadius: '16px',
             backgroundColor: 'white',
-            border: '1px solid rgba(10,37,64,0.06)',
-            boxShadow: '0 4px 12px rgba(10,37,64,0.03)'
+            border: '1px solid rgba(15,23,42,0.06)',
+            boxShadow: '0 4px 12px rgba(15,23,42,0.03)'
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
@@ -155,47 +144,24 @@ export function Sidebar() {
               width: '42px',
               height: '42px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #0A2540 0%, #162D4A 100%)',
+              background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
               fontWeight: '700',
               fontSize: '16px',
-              boxShadow: '0 4px 10px rgba(10,37,64,0.15)',
+              boxShadow: '0 4px 10px rgba(15,23,42,0.15)',
               flexShrink: 0
             }}>
               {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-              <span style={{ fontWeight: '700', color: '#0A2540', fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ fontWeight: '700', color: '#0F172A', fontSize: '14px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {user?.name || (language === 'hindi' ? 'यूज़र' : 'User')}
-              </span>
-              <span style={{ fontWeight: '500', color: '#8898AA', fontSize: '12px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                {user?.phone_number ? `+91 ${user.phone_number}` : (language === 'hindi' ? 'कोई नंबर नहीं' : 'No phone')}
               </span>
             </div>
           </div>
-          <button
-            onClick={logout}
-            className="logout-btn"
-            style={{
-              width: '36px',
-              height: '36px',
-              border: 'none',
-              backgroundColor: '#FAFCFF',
-              borderRadius: '10px',
-              cursor: 'pointer',
-              color: '#8898AA',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexShrink: 0
-            }}
-            title="Logout"
-          >
-            <LogOut size={16} strokeWidth={2.5} />
-          </button>
         </div>
       </div>
     </aside>

@@ -6,16 +6,24 @@ import { MessageBubble } from '@/components/chat/MessageBubble'
 import { LoadingBubble } from '@/components/chat/LoadingBubble'
 import { ChatActionCards } from '@/components/chat/QuickChips'
 import { useChatStore } from '@/store/useChatStore'
-import { useAuthStore } from '@/store/useAuthStore'
+import { useUserStore } from '@/store/useUserStore'
 import { useLanguageStore } from '@/store/useLanguageStore'
 import { ChatMessage } from '@/types/chat'
-import { Sparkles, MessageCircle, Clock } from 'lucide-react'
+import { Sparkles, Plus } from 'lucide-react'
 
 export default function ChatPage() {
-  const { messages, addMessage, isLoading, setLoading } = useChatStore()
-  const { user } = useAuthStore()
+  const { messages, addMessage, isLoading, setLoading, clearChat } = useChatStore()
+  const { user } = useUserStore()
   const { language } = useLanguageStore()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  // Bumping this remounts ChatInput, which clears its local draft text and any
+  // pending image attachment along with the conversation itself.
+  const [sessionKey, setSessionKey] = useState(0)
+
+  const handleNewChat = () => {
+    clearChat()
+    setSessionKey((k) => k + 1)
+  }
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -48,7 +56,6 @@ export default function ChatPage() {
           message: text,
           messageType: imageBase64 ? 'image' : 'text',
           imageBase64,
-          userId: user?.id,
           conversationHistory: messages
         })
       })
@@ -101,6 +108,86 @@ export default function ChatPage() {
             height: 100vh !important;
           }
         }
+
+        /* New Chat bar — sticks to the top of the scrolling message area so it
+           stays reachable on desktop and mobile without altering page height. */
+        .chat-newchat-bar {
+          position: sticky;
+          top: -24px;
+          z-index: 5;
+          display: flex;
+          justify-content: flex-end;
+          margin: -24px -16px 4px;
+          padding: 12px 16px;
+          background: rgba(248, 250, 252, 0.85);
+          backdrop-filter: blur(8px);
+          border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+        }
+        .chat-newchat-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 8px 14px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #0D9488;
+          background: #FFFFFF;
+          border: 1px solid rgba(13, 148, 136, 0.28);
+          border-radius: 12px;
+          cursor: pointer;
+          outline: none;
+          transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .chat-newchat-btn:hover {
+          background: #0D9488;
+          color: #FFFFFF;
+          box-shadow: 0 6px 16px rgba(13, 148, 136, 0.22);
+        }
+        .chat-newchat-btn:active {
+          background: #0F766E;
+          color: #FFFFFF;
+        }
+        .chat-newchat-btn:focus-visible {
+          box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+        }
+
+        /* Empty-state scale: one step down on small screens so the heading
+           never crowds the cards. */
+        .chat-empty-state {
+          padding: 24px 0 40px;
+        }
+        .chat-empty-header {
+          margin-bottom: 32px;
+        }
+        .chat-empty-title {
+          font-size: 26px;
+          font-weight: 700;
+          line-height: 1.25;
+          letter-spacing: -0.5px;
+          color: #0F172A;
+          margin: 0 0 10px;
+        }
+        .chat-empty-subtitle {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #475569;
+          max-width: 400px;
+          margin: 0;
+        }
+        @media (max-width: 640px) {
+          .chat-empty-state {
+            padding: 8px 0 32px;
+          }
+          .chat-empty-header {
+            margin-bottom: 24px;
+          }
+          .chat-empty-title {
+            font-size: 22px;
+          }
+          .chat-empty-subtitle {
+            font-size: 14px;
+          }
+        }
       `}} />
 
       <div style={{
@@ -112,99 +199,61 @@ export default function ChatPage() {
         gap: '12px',
         backgroundColor: '#F8FAFC'
       }}>
+        {messages.length > 0 && (
+          <div className="chat-newchat-bar">
+            <button
+              onClick={handleNewChat}
+              className="chat-newchat-btn"
+              title={language === 'hindi' ? 'नई बात shuru karein' : 'Start a new chat'}
+            >
+              <Plus size={16} strokeWidth={2.5} />
+              <span className={language === 'hindi' ? 'font-hindi' : ''}>
+                {language === 'hindi' ? 'नई बात' : 'New Chat'}
+              </span>
+            </button>
+          </div>
+        )}
+
         {messages.length === 0 && (
-          <div style={{
+          <div className="chat-empty-state" style={{
             display: 'flex',
             flexDirection: 'column',
             width: '100%',
-            maxWidth: '800px',
-            margin: '0 auto',
-            padding: '16px 0 32px'
+            maxWidth: '720px',
+            margin: '0 auto'
           }}>
-            {/* Premium Hero */}
-            <div style={{
+            <div className="chat-empty-header app-enter" style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
-              textAlign: 'center',
-              marginBottom: '32px'
+              textAlign: 'center'
             }}>
               <div style={{
-                width: '64px',
-                height: '64px',
-                background: 'linear-gradient(135deg, rgba(99,91,255,0.1) 0%, rgba(0,212,255,0.1) 100%)',
+                width: '56px',
+                height: '56px',
+                background: 'rgba(13,148,136,0.08)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                marginBottom: '16px',
-                boxShadow: '0 8px 24px rgba(99,91,255,0.08)'
+                marginBottom: '16px'
               }}>
-                <Sparkles size={32} color="#635BFF" strokeWidth={1.5} />
+                <Sparkles size={26} color="#0D9488" strokeWidth={1.75} />
               </div>
-              <h2 style={{
-                fontSize: '28px',
-                fontWeight: '800',
-                color: '#0A2540',
-                marginBottom: '8px',
-                letterSpacing: '-0.5px'
-              }}>
-                {/* Fallback to 'Dost' (friend) if user name is missing */}
-                {user?.name 
+              <h2 className={`chat-empty-title ${language === 'hindi' ? 'font-hindi' : ''}`}>
+                {/* Greet by first name when we have one. */}
+                {user?.name
                   ? (language === 'hindi' ? `मैं आपकी कैसे मदद कर सकता हूँ, ${user.name.split(' ')[0]}?` : `How can I help you today, ${user.name.split(' ')[0]}?`)
                   : (language === 'hindi' ? 'मैं आपकी कैसे मदद कर सकता हूँ?' : 'How can I help you today?')}
               </h2>
-              <p style={{
-                color: '#425466',
-                fontSize: '16px',
-                maxWidth: '420px',
-                margin: 0
-              }}>
+              <p className={`chat-empty-subtitle ${language === 'hindi' ? 'font-hindi' : ''}`}>
                 {language === 'hindi'
-                  ? 'अपने स्वास्थ्य से जुड़ा कोई भी सवाल पूछें, या सीधे रिपोर्ट अपलोड करें।'
-                  : 'Ask any health-related question, or upload your reports directly.'}
+                  ? 'अपने स्वास्थ्य से जुड़ा कोई भी सवाल पूछें, या रिपोर्ट की फोटो भेजें।'
+                  : 'Ask any health question, or send a photo of your report.'}
               </p>
             </div>
 
-            {/* Action Cards Grid */}
             <ChatActionCards onSelect={(text) => handleSendMessage(text)} />
-
-            {/* Recent Conversations Placeholder */}
-            <div style={{ marginTop: '40px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                <Clock size={16} color="#8898AA" />
-                <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#425466', margin: 0 }}>
-                  {language === 'hindi' ? 'हाल की बातचीत' : 'Recent Conversations'}
-                </h3>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {[
-                  { title: language === 'hindi' ? 'रक्त रिपोर्ट विश्लेषण' : 'Blood Report Analysis', date: language === 'hindi' ? 'कल' : 'Yesterday' },
-                  { title: language === 'hindi' ? 'पीएम-जय योजना विवरण' : 'PM-JAY Scheme Details', date: language === 'hindi' ? '2 दिन पहले' : '2 days ago' }
-                ].map((chat, idx) => (
-                  <div key={idx} style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '16px',
-                    backgroundColor: 'white',
-                    borderRadius: '12px',
-                    border: '1px solid rgba(10,37,64,0.06)',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease',
-                    boxShadow: '0 2px 8px rgba(10,37,64,0.02)'
-                  }} className="recent-chat-card">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ padding: '8px', backgroundColor: '#F4F4FF', borderRadius: '8px', color: '#635BFF' }}>
-                        <MessageCircle size={18} />
-                      </div>
-                      <span style={{ fontSize: '15px', fontWeight: '500', color: '#0A2540' }}>{chat.title}</span>
-                    </div>
-                    <span style={{ fontSize: '13px', color: '#8898AA' }}>{chat.date}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         )}
 
@@ -226,7 +275,7 @@ export default function ChatPage() {
         display: 'flex',
         flexDirection: 'column'
       }}>
-        <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+        <ChatInput key={sessionKey} onSendMessage={handleSendMessage} disabled={isLoading} />
       </div>
     </div>
   )

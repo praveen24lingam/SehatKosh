@@ -1,28 +1,103 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
 
 @layer base {
   :root {
-    --stripe-dark:        #0A2540;
-    --stripe-darker:      #091E38;
-    --stripe-purple:      #635BFF;
-    --stripe-purple-light:#7A73FF;
-    --stripe-purple-soft: rgba(99,91,255,0.12);
-    --stripe-cyan:        #00D4FF;
-    --stripe-green:       #00D924;
-    --stripe-white:       #FFFFFF;
-    --stripe-offwhite:    #F6F9FC;
-    --stripe-text:        #0A2540;
-    --stripe-muted:       #425466;
-    --stripe-light-muted: #8898AA;
-    --border-light:       #E6EBF1;
+    /* ---- Palette (single source of truth) ----
+       Calm, trustworthy health palette. Teal is the only accent; red is
+       reserved exclusively for Emergency. */
+    --accent:             #0D9488;   /* primary teal            */
+    --accent-hover:       #0F766E;   /* darker teal, hover/press */
+    --accent-light:       #14B8A6;   /* lighter teal, gradients  */
+    --accent-tint:        #CCFBF1;   /* soft teal wash           */
+    --heading:            #0F172A;
+    --body:               #475569;
+    --muted:              #94A3B8;
+    --surface-page:       #F8FAFC;
+    --surface-card:       #FFFFFF;
+    --border:             #E2E8F0;
+    --danger:             #DC2626;   /* Emergency only           */
+
+    /* Legacy aliases — kept so existing `stripe-*` Tailwind tokens resolve. */
+    --stripe-dark:        var(--heading);
+    --stripe-darker:      var(--heading);
+    --stripe-purple:      var(--accent);
+    --stripe-purple-light:var(--accent-light);
+    --stripe-purple-soft: rgba(13,148,136,0.12);
+    --stripe-cyan:        var(--accent-light);
+    --stripe-green:       var(--accent);
+    --stripe-white:       var(--surface-card);
+    --stripe-offwhite:    var(--surface-page);
+    --stripe-text:        var(--heading);
+    --stripe-muted:       var(--body);
+    --stripe-light-muted: var(--muted);
+    --border-light:       var(--border);
     --border-dark:        rgba(255,255,255,0.1);
+
+    /* ---- Design-system primitives (used across the app) ---- */
+    /* Radius scale */
+    --radius-sm:   8px;    /* chips, inputs */
+    --radius-md:   12px;   /* buttons */
+    --radius-lg:   16px;   /* small cards */
+    --radius-xl:   24px;   /* large panels / sheets */
+
+    /* Elevation scale (soft, ink-tinted — never pure black) */
+    --shadow-card:        0 1px 2px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.05);
+    --shadow-card-hover:  0 12px 28px rgba(15,23,42,0.10);
+    --shadow-panel:       0 24px 48px rgba(15,23,42,0.08);
+
+    /* Focus ring */
+    --ring: var(--accent);
   }
 
   body {
     background-color: var(--stripe-offwhite);
     color: var(--stripe-text);
+    overflow-x: hidden;
+    width: 100vw;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Consistent, accessible keyboard focus for every interactive element.
+     Uses :focus-visible so it only appears for keyboard/programmatic focus,
+     never on mouse click. Applies app-wide (landing + forms + dashboard). */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [role="button"]:focus-visible,
+  [tabindex]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  /* ── Typographic baseline ──────────────────────────────────────────
+     Headings use the display face with tighter leading and negative
+     tracking for a polished, premium feel. These are element-level rules,
+     so they cascade to inline-styled page headings too (which set size/
+     weight/color inline but not font-family/line-height on the heading
+     itself). The `.font-hindi` utility still wins by specificity, and the
+     Devanagari fallback in the stack covers un-classed Hindi headings. */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display), var(--font-hindi), ui-sans-serif, system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.018em;
+    text-wrap: balance;
+    color: var(--stripe-text);
+  }
+
+  body {
+    font-family: var(--font-body), var(--font-hindi), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: -0.006em;
+  }
+
+  /* Avoid orphans/awkward line breaks in flowing copy. */
+  p {
+    text-wrap: pretty;
   }
 }
 
@@ -30,9 +105,9 @@
 .stripe-hero-bg {
   background-color: var(--stripe-dark);
   background-image: 
-    radial-gradient(ellipse 60% 80% at 80% -20%, rgba(99,91,255,0.4) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 60% at -10% 50%, rgba(0,212,255,0.2) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 100%, rgba(99,91,255,0.15) 0%, transparent 50%);
+    radial-gradient(ellipse 60% 80% at 80% -20%, rgba(13,148,136,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse 40% 60% at -10% 50%, rgba(20,184,166,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 50% 100%, rgba(13,148,136,0.15) 0%, transparent 50%);
 }
 
 /* CSS Animations requested */
@@ -44,13 +119,13 @@
 @keyframes pulse-glow {
   0%, 100% {
     box-shadow: 
-      0 0 0 1px rgba(99,91,255,0.2), 
-      0 32px 64px rgba(99,91,255,0.15);
+      0 0 0 1px rgba(13,148,136,0.2), 
+      0 32px 64px rgba(13,148,136,0.15);
   }
   50% {
     box-shadow: 
-      0 0 0 1px rgba(99,91,255,0.4), 
-      0 32px 64px rgba(99,91,255,0.25);
+      0 0 0 1px rgba(13,148,136,0.4), 
+      0 32px 64px rgba(13,148,136,0.25);
   }
 }
 
@@ -66,4 +141,99 @@
 
 .animate-pulse-glow { 
   animation: pulse-glow 3s ease-in-out infinite; 
+}
+
+/* Hide scrollbar globally */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Shared micro-interaction: subtle lift on hover.
+   Referenced by nav/CTA buttons and cards for a consistent hover feel. */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+/*
+  ── SehatKosh design-system reference ──────────────────────────────
+  Fonts: Plus Jakarta Sans (--font-display, headings) · Inter (--font-body, UI/body)
+         · Noto Sans Devanagari (--font-hindi, Hindi). Headings default to the
+         display face app-wide via the base layer above.
+
+  Type scale:
+    Display (hero H1)   text-[40px] md:text-[64px]  font-extrabold  tracking-tight  leading-[1.1]
+    Section  (H2)       text-3xl md:text-5xl        font-bold       tracking-tight
+    Subsection (H3)     text-xl / text-2xl          font-semibold–bold
+    Lead paragraph      text-lg md:text-xl          leading-relaxed
+    Body                text-base                   leading-relaxed
+    Caption / meta      text-sm                     text-[#475569] / muted
+
+  Spacing (4/8px grid, via Tailwind steps):
+    Section padding     py-20 md:py-32
+    Section intro gap   mb-16 md:mb-20
+    Card padding        p-6 (compact) · p-8 md:p-12 (panels)
+    Grid gaps           gap-6 (cards) · gap-8–12 (steps/stats)
+
+  Radius: chips/inputs 8px · buttons 12px (rounded-xl) · cards 16–24px · pills full
+  Borders: 1px  #E2E8F0 on light · white/10 on dark
+  Elevation: --shadow-card at rest → --shadow-card-hover on hover; --shadow-panel for signature surfaces
+  Muted text: #475569 (secondary) · #94A3B8 (tertiary) on light · white/60–70 on dark
+  ───────────────────────────────────────────────────────────────────
+*/
+
+/* ───────────────────────────────────────────────────────────────────
+   Reduced motion
+   Neutralises CSS-driven animation and transitions. Framer Motion drives
+   inline styles from JS and is unaffected by this block — components use
+   the useAppMotion() hook in src/lib/motion.ts for that.
+   ─────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   Entrance animation
+   CSS-driven on purpose: server-rendered content stays visible even if
+   JS never runs. Framer Motion is reserved for interaction (hover /
+   press) and for elements that only exist after hydration.
+
+   fill-mode is `backwards`, not `both`: it applies the from-state during
+   animation-delay (so stagger works) but releases the properties once
+   finished. That matters because CSS animation styles outrank inline
+   styles — with `both`, the held `transform: none` would block Framer's
+   hover lift on the same element.
+   ─────────────────────────────────────────────────────────────────── */
+@keyframes appEnter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.app-enter {
+  animation: appEnter 0.28s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-enter {
+    animation: none;
+  }
 }

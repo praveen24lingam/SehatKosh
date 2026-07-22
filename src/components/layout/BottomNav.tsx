@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, MessageCircle, Users, Bell, Settings } from 'lucide-react'
+import { Home, MessageCircle, Settings } from 'lucide-react'
 import { useLanguageStore } from '@/store/useLanguageStore'
 
 export function BottomNav() {
@@ -12,8 +12,6 @@ export function BottomNav() {
   const navItems = [
     { href: '/dashboard', icon: Home,          labelEn: 'Home',      labelHi: 'होम' },
     { href: '/chat',      icon: MessageCircle, labelEn: 'Chat',      labelHi: 'चैट' },
-    { href: '/family',    icon: Users,         labelEn: 'Family',    labelHi: 'परिवार' },
-    { href: '/reminders', icon: Bell,          labelEn: 'Alerts',    labelHi: 'अलर्ट' },
     { href: '/settings',  icon: Settings,      labelEn: 'Settings',  labelHi: 'सेटिंग्स' },
   ]
 
@@ -25,10 +23,10 @@ export function BottomNav() {
       right: '16px',
       backgroundColor: 'rgba(255, 255, 255, 0.85)',
       backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(10, 37, 64, 0.06)',
+      border: '1px solid rgba(15,23,42, 0.06)',
       borderRadius: '20px',
       zIndex: 50,
-      boxShadow: '0 12px 32px rgba(10, 37, 64, 0.08)',
+      boxShadow: '0 12px 32px rgba(15,23,42, 0.08)',
       paddingBottom: '0px',
       fontFamily: 'Inter, sans-serif'
     }}>
@@ -49,7 +47,7 @@ export function BottomNav() {
                 padding: '6px 10px',
                 minWidth: '56px',
                 textDecoration: 'none',
-                color: isActive ? '#635BFF' : '#8898AA',
+                color: isActive ? '#0D9488' : '#94A3B8',
                 transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
                 cursor: 'pointer'
               }}
@@ -63,14 +61,15 @@ export function BottomNav() {
                 height: '32px',
                 borderRadius: '8px',
                 marginBottom: '2px',
-                backgroundColor: isActive ? '#F4F4FF' : 'transparent',
+                backgroundColor: isActive ? '#CCFBF1' : 'transparent',
                 transition: 'all 0.25s ease'
               }}>
-                <Icon size={18} style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', color: isActive ? '#635BFF' : '#8898AA' }} />
+                <Icon size={18} style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', color: isActive ? '#0D9488' : '#94A3B8' }} />
               </div>
               <span style={{
-                fontSize: '9px',
-                fontWeight: isActive ? '800' : '500',
+                fontSize: '10px',
+                fontWeight: isActive ? '700' : '500',
+                letterSpacing: '0.01em',
                 lineHeight: '1.2'
               }} className={language === 'hindi' ? 'font-hindi' : ''}>
                 {language === 'hindi' ? item.labelHi : item.labelEn}
