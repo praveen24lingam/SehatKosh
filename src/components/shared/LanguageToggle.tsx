@@ -12,11 +12,11 @@ export function LanguageToggle() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        background: '#F1F5F9',
+        background: 'var(--surface-sunken)',
         borderRadius: '12px',
         padding: '4px',
         position: 'relative',
-        boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)',
+        boxShadow: 'inset 0 2px 4px rgb(var(--slate-rgb) / 0.02)',
       }}
     >
       <button
@@ -26,7 +26,7 @@ export function LanguageToggle() {
           padding: '6px 16px',
           fontSize: '14px',
           fontWeight: language === 'hindi' ? '700' : '500',
-          color: language === 'hindi' ? '#0D9488' : '#475569',
+          color: language === 'hindi' ? 'var(--primary)' : 'var(--foreground-secondary)',
           background: 'transparent',
           border: 'none',
           borderRadius: '10px',
@@ -44,7 +44,7 @@ export function LanguageToggle() {
               inset: 0,
               background: 'white',
               borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(13,148,136,0.15)',
+              boxShadow: '0 2px 8px rgb(var(--teal-rgb) / 0.15)',
               zIndex: -1
             }}
             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -60,7 +60,7 @@ export function LanguageToggle() {
           padding: '6px 16px',
           fontSize: '14px',
           fontWeight: language === 'english' ? '700' : '500',
-          color: language === 'english' ? '#0D9488' : '#475569',
+          color: language === 'english' ? 'var(--primary)' : 'var(--foreground-secondary)',
           background: 'transparent',
           border: 'none',
           borderRadius: '10px',
@@ -78,7 +78,7 @@ export function LanguageToggle() {
               inset: 0,
               background: 'white',
               borderRadius: '10px',
-              boxShadow: '0 2px 8px rgba(13,148,136,0.15)',
+              boxShadow: '0 2px 8px rgb(var(--teal-rgb) / 0.15)',
               zIndex: -1
             }}
             transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}

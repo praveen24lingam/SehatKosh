@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle2, Sparkles, ScanLine, MessageCircle } from 'lucide-react';
+import { DURATION, EASE_OUT, useAppMotion } from '@/lib/motion';
 
 export interface TabItem {
   id: string;
@@ -23,64 +24,72 @@ const tabIcons: Record<string, React.ComponentType<{ className?: string; strokeW
 
 export function FeatureTabs({ tabs }: FeatureTabsProps) {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const { pressInteraction, reduce } = useAppMotion();
 
   const activeContent = tabs.find((t) => t.id === activeTab) || tabs[0];
 
   return (
     <div className="w-full">
       {/* Tabs Header */}
-      <div className="flex overflow-x-auto hide-scrollbar gap-2 md:gap-4 mb-12 pb-4 md:justify-center">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`
-              whitespace-nowrap px-6 py-3 rounded-full text-sm md:text-base font-semibold transition-all
-              ${
-                activeTab === tab.id
-                  ? 'bg-[#0D9488] text-white shadow-md'
-                  : 'bg-white text-[#475569] border border-[#E2E8F0] hover:border-[#0D9488] hover:text-[#0D9488]'
-              }
-            `}
-          >
-            {tab.label}
-          </button>
-        ))}
+      <div className="hide-scrollbar mb-12 flex gap-2 overflow-x-auto pb-4 md:justify-center md:gap-4">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <motion.button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              aria-pressed={isActive}
+              {...pressInteraction}
+              className={`whitespace-nowrap rounded-full px-6 py-3 text-sm font-semibold tracking-[-0.005em] transition-[background-color,border-color,color,box-shadow] duration-200 md:text-base ${
+                isActive
+                  ? 'bg-[var(--primary)] text-white shadow-[0_8px_20px_rgb(var(--teal-rgb) / 0.25)]'
+                  : 'border border-[var(--border)] bg-white text-[var(--foreground-secondary)] hover:border-[var(--primary)]/40 hover:text-[var(--primary)]'
+              }`}
+            >
+              {tab.label}
+            </motion.button>
+          );
+        })}
       </div>
 
-      {/* Tab Content */}
-      <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm overflow-hidden min-h-[500px]">
+      {/* Tab Content — a signature panel, so it keeps the 24px panel radius
+          while the cards elsewhere stay at 16px. */}
+      <div className="min-h-[500px] overflow-hidden rounded-[var(--radius-xl)] border border-[var(--border)] bg-white shadow-[var(--shadow-card)]">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
-            initial={{ opacity: 0, y: 10 }}
+            initial={reduce ? false : { opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-12 items-center"
+            exit={reduce ? { opacity: 1 } : { opacity: 0, y: -8 }}
+            transition={{ duration: DURATION.base, ease: EASE_OUT }}
+            className="grid grid-cols-1 items-center gap-8 p-8 md:grid-cols-2 md:p-12"
           >
             {/* Left: Illustration Placeholder */}
-            <div className="relative w-full h-[300px] md:h-[450px] bg-[#F8FAFC] rounded-2xl flex items-center justify-center overflow-hidden">
+            <div className="relative flex h-[300px] w-full items-center justify-center overflow-hidden rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--background)] md:h-[450px]">
+              <div
+                aria-hidden
+                className="hero-dots pointer-events-none absolute inset-0 opacity-40"
+              />
               {(() => {
                 const Icon = tabIcons[activeContent.id] ?? Sparkles;
-                return <Icon className="w-24 h-24 text-[#0D9488]/30" strokeWidth={1.25} />;
+                return <Icon className="relative h-24 w-24 text-[var(--primary)]/30" strokeWidth={1.25} />;
               })()}
             </div>
 
             {/* Right: Features */}
             <div>
-              <h3 className="text-2xl md:text-3xl font-bold text-[#0F172A] mb-4">
+              <h3 className="mb-4 text-[24px] font-bold leading-[1.15] tracking-[-0.02em] text-[var(--foreground)] md:text-[30px]">
                 {activeContent.label}
               </h3>
-              <p className="text-[#475569] text-lg mb-8">
+              <p className="mb-8 text-[17px] leading-[1.6] tracking-[-0.005em] text-[var(--foreground-secondary)] md:text-[18px]">
                 {activeContent.description}
               </p>
-              
+
               <ul className="space-y-4">
                 {activeContent.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-6 h-6 text-[#0D9488] shrink-0" />
-                    <span className="text-[#0F172A] font-medium leading-relaxed">
+                    <CheckCircle2 className="h-6 w-6 shrink-0 text-[var(--primary)]" />
+                    <span className="text-[15px] font-medium leading-[1.6] text-[var(--foreground)]">
                       {feature}
                     </span>
                   </li>

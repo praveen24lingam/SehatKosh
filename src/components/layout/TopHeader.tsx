@@ -8,78 +8,85 @@ export function TopHeader() {
   const { user } = useUserStore()
 
   return (
-    <header className="mobile-flex" style={{
-      position: 'sticky',
-      top: 0,
-      zIndex: 40,
-      width: '100%',
-      height: '72px',
-      backgroundColor: 'white',
-      borderBottom: '1px solid #E2E8F0',
-      display: 'none', // Overridden to display: flex by mobile-flex in mobile view
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      padding: '0 16px',
-      boxShadow: '0 4px 20px rgba(15,23,42,0.02)',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-        <div style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: '8px',
-          background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          boxShadow: '0 2px 4px rgba(13,148,136,0.2)'
-        }}>
-          <Activity size={18} />
-        </div>
-        <span style={{ fontWeight: '800', fontSize: '20px', color: '#0F172A', letterSpacing: '-0.5px' }}>SehatKosh</span>
+    <header
+      className="mobile-flex"
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
+        width: '100%',
+        height: 'var(--topbar-h)',
+        backgroundColor: 'rgba(255,255,255,0.9)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        borderBottom: '1px solid var(--border)',
+        display: 'none', // Overridden to display: flex by mobile-flex in mobile view
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 var(--space-3)',
+        flexShrink: 0,
+      }}
+    >
+      <Link
+        href="/dashboard"
+        style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)', textDecoration: 'none' }}
+      >
+        <span
+          style={{
+            width: '30px',
+            height: '30px',
+            borderRadius: 'var(--radius-sm)',
+            background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--primary) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            boxShadow: '0 4px 10px -2px rgb(var(--teal-rgb) / 0.45)',
+          }}
+        >
+          <Activity size={17} strokeWidth={2.5} />
+        </span>
+        <span style={{ fontWeight: 800, fontSize: '17px', color: 'var(--heading)', letterSpacing: '-0.03em' }}>
+          SehatKosh
+        </span>
       </Link>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <button style={{
-          position: 'relative',
-          padding: '8px',
-          border: 'none',
-          background: 'transparent',
-          color: '#94A3B8',
-          cursor: 'pointer',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
-          <Bell size={20} />
-          <span style={{
-            position: 'absolute',
-            top: '4px',
-            right: '4px',
-            width: '8px',
-            height: '8px',
-            backgroundColor: '#0D9488',
-            borderRadius: '50%',
-            border: '2px solid white'
-          }}></span>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+        <button className="btn-icon" type="button" aria-label="Notifications" style={{ position: 'relative' }}>
+          <Bell size={19} strokeWidth={2} />
+          <span
+            aria-hidden
+            style={{
+              position: 'absolute',
+              top: '7px',
+              right: '7px',
+              width: '7px',
+              height: '7px',
+              backgroundColor: 'var(--accent)',
+              borderRadius: '50%',
+              border: '2px solid white',
+            }}
+          />
         </button>
-        
-        <Link href="/settings" style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '36px',
-          height: '36px',
-          borderRadius: '50%',
-          background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
-          color: 'white',
-          textDecoration: 'none',
-          fontWeight: '700',
-          fontSize: '14px',
-          boxShadow: '0 2px 4px rgba(13,148,136,0.2)'
-        }}>
+
+        <Link
+          href="/settings"
+          aria-label="Profile settings"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '34px',
+            height: '34px',
+            borderRadius: '999px',
+            background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--primary) 100%)',
+            color: 'white',
+            textDecoration: 'none',
+            fontWeight: 700,
+            fontSize: '14px',
+            boxShadow: '0 4px 10px -2px rgb(var(--teal-rgb) / 0.4)',
+          }}
+        >
           {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
         </Link>
       </div>

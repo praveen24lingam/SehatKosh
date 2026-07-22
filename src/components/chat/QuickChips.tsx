@@ -117,22 +117,22 @@ export function ChatActionCards({ onSelect }: ChatActionCardsProps) {
           padding: 16px;
           text-align: left;
           cursor: pointer;
-          background: #FFFFFF;
-          border: 1px solid rgba(15,23,42, 0.07);
+          background: var(--surface);
+          border: 1px solid rgb(var(--slate-rgb) / 0.07);
           border-radius: 16px;
-          box-shadow: 0 1px 2px rgba(15,23,42, 0.04);
+          box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.04);
           outline: none;
           /* Transform is driven by Framer Motion; CSS only handles the
              surface treatment so the two never fight over the same property. */
           transition: box-shadow 0.2s ease, border-color 0.2s ease;
         }
         .action-card:hover {
-          border-color: rgba(13,148,136, 0.28);
-          box-shadow: 0 8px 20px rgba(15,23,42, 0.06);
+          border-color: rgb(var(--teal-rgb) / 0.28);
+          box-shadow: 0 8px 20px rgb(var(--slate-rgb) / 0.06);
         }
         .action-card:focus-visible {
-          border-color: #0D9488;
-          box-shadow: 0 0 0 3px rgba(13,148,136, 0.15);
+          border-color: var(--primary);
+          box-shadow: 0 0 0 3px rgb(var(--teal-rgb) / 0.15);
         }
 
         .action-icon-wrap {
@@ -143,26 +143,26 @@ export function ChatActionCards({ onSelect }: ChatActionCardsProps) {
           display: flex;
           align-items: center;
           justify-content: center;
-          background: rgba(13,148,136, 0.08);
-          color: #0D9488;
+          background: rgb(var(--teal-rgb) / 0.08);
+          color: var(--primary);
           transition: background 0.2s ease;
         }
         .action-card:hover .action-icon-wrap {
-          background: rgba(13,148,136, 0.14);
+          background: rgb(var(--teal-rgb) / 0.14);
         }
 
         .action-card-label {
           font-size: 15px;
           font-weight: 600;
           line-height: 1.35;
-          color: #0F172A;
+          color: var(--foreground);
           letter-spacing: -0.1px;
         }
         .action-card-hint {
           font-size: 13px;
           font-weight: 400;
           line-height: 1.45;
-          color: #94A3B8;
+          color: var(--icon-muted);
         }
       `}} />
 

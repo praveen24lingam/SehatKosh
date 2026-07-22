@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FeatureTabs, TabItem } from './FeatureTabs';
+import { useReveal } from '@/lib/motion';
 
 const featureTabsData: TabItem[] = [
   {
@@ -27,29 +28,37 @@ const featureTabsData: TabItem[] = [
 ];
 
 export function FeaturesSection() {
+  const { parent, item, viewport } = useReveal();
+
   return (
     <section id="features" className="px-6 py-20 md:py-28 bg-white">
       <div className="mx-auto max-w-6xl">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-100px" }}
+          variants={parent}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewport}
           className="mx-auto mb-14 max-w-2xl text-center md:mb-16"
         >
-          <h2 className="mb-5 text-[30px] font-bold leading-[1.15] tracking-[-0.02em] text-[#0F172A] md:text-[42px]">
+          <motion.h2
+            variants={item}
+            className="mb-4 text-[30px] font-bold leading-[1.1] tracking-[-0.02em] text-[var(--foreground)] md:text-[40px]"
+          >
             Everything You Need to Understand Your Health
-          </h2>
-          <p className="text-[17px] leading-[1.65] text-[#475569] md:text-lg">
+          </motion.h2>
+          <motion.p
+            variants={item}
+            className="text-[17px] leading-[1.6] tracking-[-0.005em] text-[var(--foreground-secondary)] md:text-[18px]"
+          >
             One AI assistant that reads your documents and answers your questions — in the language you actually speak.
-          </p>
+          </motion.p>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
-          viewport={{ once: true, margin: "-100px" }}
+          variants={item}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewport}
         >
           <FeatureTabs tabs={featureTabsData} />
         </motion.div>

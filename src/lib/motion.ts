@@ -1,6 +1,7 @@
 'use client'
 
 import type { CSSProperties } from 'react'
+import type { Variants } from 'framer-motion'
 import { useReducedMotion } from 'framer-motion'
 
 /**
@@ -40,6 +41,53 @@ export const ENTER_STAGGER_MS = 60
  */
 export function enterDelay(index: number): CSSProperties {
   return index > 0 ? { animationDelay: `${index * ENTER_STAGGER_MS}ms` } : {}
+}
+
+/** Distance a revealed element travels on the way in. */
+const REVEAL_Y = 16
+
+/**
+ * Reveal variants shared by every landing section, so a card entering on the
+ * Problem grid moves exactly like one entering on Features.
+ */
+const revealItem: Variants = {
+  hidden: { opacity: 0, y: REVEAL_Y },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: DURATION.slow, ease: EASE_OUT },
+  },
+}
+
+/** No-op pair used when the user has asked for reduced motion. */
+const staticItem: Variants = {
+  hidden: { opacity: 1, y: 0 },
+  show: { opacity: 1, y: 0 },
+}
+
+/** Standard viewport trigger: fire once, slightly before the element is flush. */
+export const REVEAL_VIEWPORT = { once: true, margin: '-80px' } as const
+
+/**
+ * Staggered reveal for a group. Spread `parent` onto the wrapper and `item`
+ * onto each child; the parent orchestrates, the children inherit `hidden` /
+ * `show` automatically.
+ *
+ * Hero-style groups animate on load (`animate="show"`); scroll-triggered
+ * groups use `whileInView="show"` with {@link REVEAL_VIEWPORT}.
+ */
+export function useReveal(stagger = 0.07) {
+  const reduce = useReducedMotion()
+
+  return {
+    reduce: Boolean(reduce),
+    viewport: REVEAL_VIEWPORT,
+    parent: {
+      hidden: {},
+      show: reduce ? {} : { transition: { staggerChildren: stagger } },
+    } satisfies Variants,
+    item: reduce ? staticItem : revealItem,
+  }
 }
 
 /**

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { FileText, Languages, Search } from 'lucide-react';
+import { useAppMotion, useReveal } from '@/lib/motion';
 
 const problems = [
   {
@@ -28,46 +29,59 @@ const problems = [
 ];
 
 export function ProblemSection() {
+  const { parent, item, viewport } = useReveal();
+  const { cardInteraction } = useAppMotion();
+
   return (
     <section className="px-6 py-20 md:py-28 bg-white">
       <div className="mx-auto max-w-6xl">
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-100px" }}
+        <motion.div
+          variants={parent}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewport}
           className="mx-auto mb-14 max-w-2xl text-center md:mb-16"
         >
-          <h2 className="mb-5 text-[30px] font-bold leading-[1.15] tracking-[-0.02em] text-[#0F172A] md:text-[42px]">
+          <motion.h2
+            variants={item}
+            className="mb-4 text-[30px] font-bold leading-[1.1] tracking-[-0.02em] text-[var(--foreground)] md:text-[40px]"
+          >
             The Problem Millions of Indians Face
-          </h2>
-          <p className="text-[17px] leading-[1.65] text-[#475569] md:text-lg">
+          </motion.h2>
+          <motion.p
+            variants={item}
+            className="text-[17px] leading-[1.6] tracking-[-0.005em] text-[var(--foreground-secondary)] md:text-[18px]"
+          >
             Health information is written in a language most people cannot read — so they guess, or they ask the internet.
-          </p>
+          </motion.p>
         </motion.div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          {problems.map((problem, idx) => (
+        <motion.div
+          variants={parent}
+          initial="hidden"
+          whileInView="show"
+          viewport={viewport}
+          className="grid grid-cols-1 gap-6 md:grid-cols-3"
+        >
+          {problems.map((problem) => (
             <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut", delay: idx * 0.1 }}
-              viewport={{ once: true, margin: "-50px" }}
-              className="rounded-2xl border border-[#E2E8F0] bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-[#0D9488]/25 hover:shadow-lg"
+              key={problem.title}
+              variants={item}
+              {...cardInteraction}
+              className="surface-card p-7"
             >
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${problem.bg}`}>
-                <problem.icon className={`w-6 h-6 ${problem.color}`} />
+              <div className={`mb-6 flex h-12 w-12 items-center justify-center rounded-xl ${problem.bg}`}>
+                <problem.icon className={`h-6 w-6 ${problem.color}`} />
               </div>
-              <h3 className="mb-2.5 text-[17px] font-bold leading-snug tracking-[-0.01em] text-[#0F172A]">
+              <h3 className="mb-2.5 text-[17px] font-bold leading-snug tracking-[-0.015em] text-[var(--foreground)]">
                 {problem.title}
               </h3>
-              <p className="text-[15px] leading-[1.65] text-[#475569]">
+              <p className="text-[15px] leading-[1.6] text-[var(--foreground-secondary)]">
                 {problem.description}
               </p>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

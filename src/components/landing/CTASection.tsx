@@ -2,37 +2,55 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useAppMotion, useReveal } from '@/lib/motion';
+
+const MotionLink = motion.create(Link);
 
 export function CTASection() {
+  const { parent, item, viewport } = useReveal();
+  const { pressInteraction } = useAppMotion();
+
   return (
-    <section className="relative overflow-hidden bg-[#0F172A] px-6 py-20 md:py-28">
+    <section className="relative overflow-hidden bg-[var(--foreground)] px-6 py-20 md:py-28">
       {/* Background radial gradient */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[radial-gradient(circle,rgba(13,148,136,0.2)_0%,transparent_70%)] pointer-events-none" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-0 top-0 h-[600px] w-[600px] bg-[radial-gradient(circle,rgb(var(--teal-rgb) / 0.2)_0%,transparent_70%)]"
+      />
+      {/* Faint dot texture, mirroring the hero so both bookends feel related. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:radial-gradient(rgba(255,255,255,0.16)_1px,transparent_1px)] [background-size:22px_22px] [mask-image:radial-gradient(60%_60%_at_50%_50%,#000_0%,transparent_100%)]"
+      />
 
       <div className="relative z-10 mx-auto max-w-3xl text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <h2 className="mb-5 text-[30px] font-extrabold leading-[1.15] tracking-[-0.02em] text-white md:text-[42px]">
-            Apni Sehat, Apni Bhasha Mein.
-          </h2>
-          <p className="mx-auto mb-9 max-w-xl text-[17px] leading-[1.65] text-white/70 md:text-lg">
-            Report ki photo kheencho ya sawaal poochho — AI aasan Hindi mein jawab dega. Abhi shuru karo.
-          </p>
-          
-          <Link
-            href="/chat"
-            className="inline-block bg-[#0D9488] text-white px-10 py-5 rounded-xl font-bold text-lg hover:-translate-y-1 hover:shadow-[0_10px_20px_rgba(13,148,136,0.3)] transition-all mb-4"
+        <motion.div variants={parent} initial="hidden" whileInView="show" viewport={viewport}>
+          <motion.h2
+            variants={item}
+            className="mb-4 text-[30px] font-extrabold leading-[1.1] tracking-[-0.02em] text-white md:text-[40px]"
           >
-            Get Started Free
-          </Link>
-          
-          <div className="text-white/60 text-sm">
+            Apni Sehat, Apni Bhasha Mein.
+          </motion.h2>
+          <motion.p
+            variants={item}
+            className="mx-auto mb-9 max-w-xl text-[17px] leading-[1.6] tracking-[-0.005em] text-white/70 md:text-[18px]"
+          >
+            Report ki photo kheencho ya sawaal poochho — AI aasan Hindi mein jawab dega. Abhi shuru karo.
+          </motion.p>
+
+          <motion.div variants={item} className="mb-4">
+            <MotionLink
+              href="/chat"
+              {...pressInteraction}
+              className="inline-block rounded-xl bg-[var(--primary)] px-10 py-5 text-[17px] font-bold tracking-[-0.005em] text-white shadow-[0_10px_24px_rgb(var(--teal-rgb) / 0.28)] transition-[background-color,box-shadow] duration-200 hover:bg-[var(--primary-hover)] hover:shadow-[0_14px_32px_rgb(var(--teal-rgb) / 0.4)]"
+            >
+              Get Started Free
+            </MotionLink>
+          </motion.div>
+
+          <motion.div variants={item} className="text-[13px] font-medium text-white/60">
             Free forever. No credit card needed.
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>

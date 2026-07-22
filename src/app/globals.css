@@ -3,34 +3,156 @@
 
 @layer base {
   :root {
-    /* ---- Palette (single source of truth) ----
-       Calm, trustworthy health palette. Teal is the only accent; red is
-       reserved exclusively for Emergency. */
-    --accent:             #0D9488;   /* primary teal            */
-    --accent-hover:       #0F766E;   /* darker teal, hover/press */
-    --accent-light:       #14B8A6;   /* lighter teal, gradients  */
-    --accent-tint:        #CCFBF1;   /* soft teal wash           */
-    --heading:            #0F172A;
-    --body:               #475569;
-    --muted:              #94A3B8;
-    --surface-page:       #F8FAFC;
-    --surface-card:       #FFFFFF;
-    --border:             #E2E8F0;
-    --danger:             #DC2626;   /* Emergency only           */
+    /* ═══════════════════════════════════════════════════════════════
+       COLOR SYSTEM
+       Two layers. PRIMITIVES are raw ramps and are never referenced by
+       a component. SEMANTIC tokens name a *job* and are the only thing
+       components use — so a hue can be retuned in one place.
 
-    /* Legacy aliases — kept so existing `stripe-*` Tailwind tokens resolve. */
-    --stripe-dark:        var(--heading);
-    --stripe-darker:      var(--heading);
-    --stripe-purple:      var(--accent);
-    --stripe-purple-light:var(--accent-light);
-    --stripe-purple-soft: rgba(13,148,136,0.12);
-    --stripe-cyan:        var(--accent-light);
-    --stripe-green:       var(--accent);
-    --stripe-white:       var(--surface-card);
-    --stripe-offwhite:    var(--surface-page);
-    --stripe-text:        var(--heading);
-    --stripe-muted:       var(--body);
-    --stripe-light-muted: var(--muted);
+       Hue budget, deliberately small:
+         Teal    — the single brand family. Nothing else is teal.
+         Slate   — every neutral: text, borders, surfaces.
+         Emerald — success status only. Never a brand accent.
+         Amber   — warning status only.
+         Red     — destructive / Emergency only.
+       ═══════════════════════════════════════════════════════════════ */
+
+    /* ── Primitives: teal (brand) ── */
+    --teal-50:  #F0FDFA;
+    --teal-100: #CCFBF1;
+    --teal-200: #99F6E4;
+    --teal-300: #5EEAD4;
+    --teal-400: #2DD4BF;
+    --teal-500: #14B8A6;
+    --teal-600: #0D9488;
+    --teal-700: #0F766E;
+    --teal-800: #115E59;
+    --teal-900: #134E4A;
+    /* Triplets for alpha compositing: rgb(var(--teal-rgb) / 0.12) */
+    --teal-rgb: 13 148 136;        /* teal-600 */
+    --teal-light-rgb: 20 184 166;  /* teal-500 */
+
+    /* ── Primitives: slate (neutrals) ── */
+    --slate-0:   #FFFFFF;
+    --slate-50:  #F8FAFC;
+    --slate-100: #F1F5F9;
+    --slate-200: #E2E8F0;
+    --slate-300: #CBD5E1;
+    --slate-400: #94A3B8;
+    --slate-500: #64748B;
+    --slate-600: #475569;
+    --slate-700: #334155;
+    --slate-800: #1E293B;
+    --slate-900: #0F172A;
+    --slate-rgb: 15 23 42;
+
+    /* ── Primitives: status ── */
+    --emerald-50:  #ECFDF5;
+    --emerald-600: #059669;
+    --emerald-700: #047857;
+    --amber-50:    #FFFBEB;
+    --amber-600:   #D97706;
+    --amber-700:   #B45309;
+    --red-50:      #FEF2F2;
+    --red-200:     #FECACA;
+    --red-600:     #DC2626;
+    --red-700:     #B91C1C;
+    --red-rgb:     220 38 38;
+
+    /* ═══ SEMANTIC TOKENS ═══════════════════════════════════════════ */
+
+    /* Surfaces. `--surface` is the raised card; `--background` is the
+       soft neutral page behind it. Pure white is a surface, never the
+       page — that separation is what stops the UI reading as flat. */
+    --background:        var(--slate-50);
+    --surface:           var(--slate-0);
+    --surface-sunken:    var(--slate-100);
+
+    /* Foreground. Three weights, all AA on --surface and --background.
+       --foreground-muted is slate-500 (4.8:1), NOT slate-400 (2.9:1) —
+       slate-400 fails AA for text and is reserved for decorative icons
+       via --icon-muted below. */
+    --foreground:           var(--slate-900);
+    --foreground-secondary: var(--slate-600);
+    --foreground-muted:     var(--slate-500);
+    --icon-muted:           var(--slate-400);
+
+    /* Primary (brand). */
+    --primary:            var(--teal-600);
+    --primary-hover:      var(--teal-700);
+    --primary-active:     var(--teal-800);
+    --primary-foreground: var(--slate-0);
+    --primary-subtle:     var(--teal-50);
+    --primary-muted:      var(--teal-100);
+    --primary-border:     rgb(var(--teal-rgb) / 0.22);
+    --primary-gradient:   linear-gradient(135deg, var(--teal-500) 0%, var(--teal-600) 100%);
+
+    /* Secondary — deep ink, for controls that must outrank the page
+       without competing with the brand (avatars, dark CTAs). */
+    --secondary:            var(--slate-900);
+    --secondary-hover:      var(--slate-800);
+    --secondary-foreground: var(--slate-0);
+
+    /* Muted — low-emphasis fills and their text. */
+    --muted-surface:    var(--slate-100);
+    --muted-foreground: var(--foreground-muted);
+
+    /* Borders. */
+    --border:         var(--slate-200);
+    --border-strong:  var(--slate-300);
+    --border-primary: var(--primary-border);
+
+    /* Status. Each gets a fill, a subtle wash, and a border tint. */
+    --success:            var(--emerald-600);
+    --success-strong:     var(--emerald-700);
+    --success-foreground: var(--slate-0);
+    --success-subtle:     var(--emerald-50);
+
+    --warning:            var(--amber-600);
+    --warning-strong:     var(--amber-700);
+    --warning-foreground: var(--slate-0);
+    --warning-subtle:     var(--amber-50);
+
+    /* Destructive: Emergency and errors. red-600 carries the urgency a
+       health app needs; red-500 (#EF4444) was dropped for reading neon. */
+    --destructive:            var(--red-600);
+    --destructive-strong:     var(--red-700);
+    --destructive-foreground: var(--slate-0);
+    --destructive-subtle:     var(--red-50);
+    --destructive-border:     var(--red-200);
+    --destructive-gradient:   linear-gradient(135deg, var(--red-600) 0%, var(--red-700) 100%);
+
+    /* ── Back-compat aliases ──
+       Older components and the `stripe-*` Tailwind tokens still read
+       these. They now resolve through the semantic layer, so retuning a
+       semantic token updates them too. Prefer the semantic names above
+       in new code. */
+    --accent:             var(--primary);
+    --accent-hover:       var(--primary-hover);
+    --accent-light:       var(--teal-500);
+    --accent-tint:        var(--primary-muted);
+    --heading:            var(--foreground);
+    --body:               var(--foreground-secondary);
+    --muted:              var(--foreground-muted);
+    --surface-page:       var(--background);
+    --surface-card:       var(--surface);
+    --danger:             var(--destructive);
+    --danger-soft:        var(--destructive-subtle);
+    --success-soft:       var(--success-subtle);
+    --warning-soft:       var(--warning-subtle);
+    --text-secondary:     var(--foreground-secondary);
+    --stripe-dark:        var(--foreground);
+    --stripe-darker:      var(--foreground);
+    --stripe-purple:      var(--primary);
+    --stripe-purple-light:var(--teal-500);
+    --stripe-purple-soft: rgb(var(--teal-rgb) / 0.12);
+    --stripe-cyan:        var(--teal-500);
+    --stripe-green:       var(--primary);
+    --stripe-white:       var(--surface);
+    --stripe-offwhite:    var(--background);
+    --stripe-text:        var(--foreground);
+    --stripe-muted:       var(--foreground-secondary);
+    --stripe-light-muted: var(--foreground-muted);
     --border-light:       var(--border);
     --border-dark:        rgba(255,255,255,0.1);
 
@@ -41,18 +163,38 @@
     --radius-lg:   16px;   /* small cards */
     --radius-xl:   24px;   /* large panels / sheets */
 
-    /* Elevation scale (soft, ink-tinted — never pure black) */
-    --shadow-card:        0 1px 2px rgba(15,23,42,0.04), 0 4px 12px rgba(15,23,42,0.05);
-    --shadow-card-hover:  0 12px 28px rgba(15,23,42,0.10);
-    --shadow-panel:       0 24px 48px rgba(15,23,42,0.08);
+    /* Elevation — every level is LAYERED: a tight contact shadow that
+       defines the edge, plus a wide diffuse one that lifts the card off the
+       page. A single blurred shadow is the main thing that reads as "flat
+       beginner card"; two layers is what real depth looks like.
+       All tinted with the neutral ink, never pure black. */
+    --shadow-card:
+      0 1px 1px rgb(var(--slate-rgb) / 0.05),
+      0 2px 4px rgb(var(--slate-rgb) / 0.04),
+      0 8px 20px -6px rgb(var(--slate-rgb) / 0.08);
+    --shadow-card-hover:
+      0 1px 2px rgb(var(--slate-rgb) / 0.06),
+      0 4px 8px rgb(var(--slate-rgb) / 0.05),
+      0 18px 36px -10px rgb(var(--slate-rgb) / 0.16);
+    --shadow-panel:
+      0 2px 4px rgb(var(--slate-rgb) / 0.04),
+      0 24px 48px -12px rgb(var(--slate-rgb) / 0.14);
+    --shadow-primary:
+      0 1px 2px rgb(var(--slate-rgb) / 0.06),
+      0 10px 24px -8px rgb(var(--teal-rgb) / 0.45);
+
+    /* A barely-there vertical wash. Sitting this under a card instead of
+       flat white is what stops a grid of cards reading as paper cutouts. */
+    --surface-gradient:
+      linear-gradient(180deg, var(--surface) 0%, rgb(var(--teal-rgb) / 0.022) 100%);
 
     /* Focus ring */
-    --ring: var(--accent);
+    --ring: var(--primary);
   }
 
   body {
-    background-color: var(--stripe-offwhite);
-    color: var(--stripe-text);
+    background-color: var(--background);
+    color: var(--foreground);
     overflow-x: hidden;
     width: 100vw;
     -webkit-font-smoothing: antialiased;
@@ -84,10 +226,10 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display), var(--font-hindi), ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.018em;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
     text-wrap: balance;
-    color: var(--stripe-text);
+    color: var(--foreground);
   }
 
   body {
@@ -99,48 +241,178 @@
   p {
     text-wrap: pretty;
   }
-}
 
-/* Stripe mesh gradient hero background */
-.stripe-hero-bg {
-  background-color: var(--stripe-dark);
-  background-image: 
-    radial-gradient(ellipse 60% 80% at 80% -20%, rgba(13,148,136,0.4) 0%, transparent 50%),
-    radial-gradient(ellipse 40% 60% at -10% 50%, rgba(20,184,166,0.2) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 50% 100%, rgba(13,148,136,0.15) 0%, transparent 50%);
-}
+  /* ── Devanagari typography ─────────────────────────────────────────
+     Hindi is not just "the same type with different glyphs". Two things
+     that make Devanagari look amateur if inherited from a Latin scale:
 
-/* CSS Animations requested */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+       1. Negative letter-spacing. Latin headings want -0.02em; Devanagari
+          conjuncts and the shirorekha (the connecting head-line) break up
+          visually when tracked in. Hindi resets to 0.
+       2. Tight leading. Matras sit above and below the baseline, so Latin
+          line-heights clip or crowd them. Hindi gets more room.
 
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 
-      0 0 0 1px rgba(13,148,136,0.2), 
-      0 32px 64px rgba(13,148,136,0.15);
+     Scoped to the `.font-hindi` class only — deliberately NOT `:lang(hi)`,
+     because the document root is <html lang="hi">, so a :lang selector would
+     match every element and force the Devanagari face onto English text too.
+
+     Text that never received the class is still correct: --font-hindi sits
+     second in the body/heading stacks, so the browser resolves Devanagari
+     codepoints to Mukta per-glyph automatically. The class only adds the
+     spacing corrections on top. */
+  .font-hindi {
+    font-family: var(--font-hindi), var(--font-body), ui-sans-serif, system-ui, sans-serif;
+    letter-spacing: 0;
   }
-  50% {
-    box-shadow: 
-      0 0 0 1px rgba(13,148,136,0.4), 
-      0 32px 64px rgba(13,148,136,0.25);
+
+  h1.font-hindi, h2.font-hindi, h3.font-hindi,
+  h4.font-hindi, h5.font-hindi, h6.font-hindi {
+    letter-spacing: 0;
+    line-height: 1.35;
+  }
+
+  p.font-hindi,
+  .font-hindi p {
+    line-height: 1.75;
   }
 }
 
-.animate-fade-up { 
-  animation: fadeUp 600ms ease forwards; 
+/* ═══════════════════════════════════════════════════════════════════
+   APP SHELL DESIGN SYSTEM
+   Tokens and primitives for the signed-in product (dashboard + shell).
+   The landing page keeps its own marketing-scale type; this layer is
+   deliberately denser and quieter, sized for repeated daily use.
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Spacing: strict 8px system ──
+     Everything in the app shell is a multiple of 8, except --space-1
+     (4px) for optical nudges inside a control. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 40px;
+  --space-7: 48px;
+
+  /* Shell metrics, referenced by more than one component. */
+  --sidebar-w: 268px;
+  --topbar-h: 64px;
+  --bottomnav-h: 68px;
 }
 
-/* Stagger utilities for animation delays */
-.delay-0 { animation-delay: 0ms; }
-.delay-150 { animation-delay: 150ms; }
-.delay-300 { animation-delay: 300ms; }
-.delay-450 { animation-delay: 450ms; }
+/* ── Type scale ────────────────────────────────────────────────────
+   Six roles, no more. Every piece of text in the shell picks one, so
+   sizes cannot drift component to component. Sizes are in px because
+   the surrounding components set px inline; keeping units consistent
+   avoids compounding-rem surprises. */
+.t-page-title {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.025em;
+}
+.t-section {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: var(--heading);
+}
+.t-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.012em;
+  color: var(--heading);
+}
+.t-body {
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: -0.004em;
+  color: var(--body);
+}
+.t-label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.008em;
+}
+.t-meta {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0;
+  color: var(--muted);
+}
 
-.animate-pulse-glow { 
-  animation: pulse-glow 3s ease-in-out infinite; 
+/* ── Buttons ───────────────────────────────────────────────────────
+   One base + variants. Every button gets hover, active and focus
+   without each component re-inventing them. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 10px var(--space-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+              color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
+}
+.btn:active {
+  transform: scale(0.985);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--slate-0);
+  box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.06), 0 6px 16px -6px rgb(var(--teal-rgb) / 0.4);
+}
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.06), 0 10px 22px -8px rgb(var(--teal-rgb) / 0.5);
+}
+
+.btn-secondary {
+  background: var(--surface-card);
+  border-color: var(--border);
+  color: var(--heading);
+  box-shadow: var(--shadow-card);
+}
+.btn-secondary:hover {
+  border-color: rgb(var(--teal-rgb) / 0.35);
+  color: var(--accent);
+}
+
+/* Square icon-only control (bell, close, etc.). */
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.12s ease;
+}
+.btn-icon:hover {
+  background: rgb(var(--slate-rgb) / 0.05);
+  color: var(--heading);
+}
+.btn-icon:active {
+  transform: scale(0.94);
 }
 
 /* Hide scrollbar globally */
@@ -159,6 +431,434 @@
 }
 .hover-lift:hover {
   transform: translateY(-2px);
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   Landing surfaces
+   One card definition for the whole landing page, so radius, border,
+   padding rhythm and elevation cannot drift between sections.
+
+   The lift on hover is deliberately NOT here: cards are Framer elements
+   whose inline transform would outrank a CSS `translateY`. Elevation and
+   border tint are CSS (Framer never touches them); the y-offset comes
+   from `cardInteraction` in src/lib/motion.ts.
+   ─────────────────────────────────────────────────────────────────── */
+.surface-card {
+  background: var(--surface-gradient);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg); /* 16px */
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.surface-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  border-color: rgb(var(--teal-rgb) / 0.32);
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   Dashboard surfaces
+   The dashboard has exactly two card weights, and they must not converge:
+
+     .action-card  PRIMARY   — the three things you came here to do.
+                               Tinted, lifted, accented, large hit area.
+     .info-card    SECONDARY — reference links. Flat at rest, borders only,
+                               elevation appears on hover as a hint of
+                               interactivity rather than a standing claim.
+
+   Per-card colour comes in through --action-* custom properties so the
+   Emergency card can be red without a second rule set.
+
+   Transforms are absent on purpose: cards are Framer elements whose inline
+   transform outranks anything set here. Lift comes from `cardInteraction`
+   in src/lib/motion.ts; CSS owns only colour and elevation.
+   ─────────────────────────────────────────────────────────────────── */
+.action-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 152px;
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(158deg, var(--surface) 38%, var(--action-tint) 100%);
+  border: 1px solid var(--action-border);
+  /* Layered: contact edge + coloured lift in the card's own hue. */
+  box-shadow: 0 1px 1px rgb(var(--slate-rgb) / 0.05),
+              0 2px 4px rgb(var(--slate-rgb) / 0.04),
+              0 12px 26px -10px var(--action-shadow);
+  text-decoration: none;
+  overflow: hidden;
+  transition: box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Always-on accent rail. This is the strongest single signal that these
+   cards outrank the ones below, so it reads at rest, not just on hover. */
+.action-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: var(--action-gradient);
+}
+
+.action-card:hover {
+  border-color: var(--action-border-hover);
+  box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.06),
+              0 4px 8px rgb(var(--slate-rgb) / 0.05),
+              0 24px 44px -12px var(--action-shadow);
+}
+
+/* The card is the focus target, and `overflow: hidden` would clip a
+   standard outline — inset the ring so it stays fully visible. */
+.action-card:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--action-color),
+              0 2px 4px rgb(var(--slate-rgb) / 0.05),
+              0 20px 40px -12px var(--action-shadow);
+}
+
+.action-icon {
+  display: flex;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  background: var(--action-gradient);
+  color: var(--slate-0);
+  box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.08),
+              0 8px 16px -4px var(--action-shadow);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.action-card:hover .action-icon {
+  transform: scale(1.06);
+}
+
+.action-label {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--heading);
+  transition: color 0.28s ease;
+  text-wrap: balance;
+}
+.action-card:hover .action-label {
+  color: var(--action-color);
+}
+
+/* Directional affordance. Muted until hover, then adopts the card's hue. */
+.action-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-end;
+  margin-top: auto;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: var(--action-tint);
+  color: var(--action-color);
+  opacity: 0.72;
+  transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.action-card:hover .action-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(228px, 1fr));
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* ── Secondary: reference links ── */
+/* Same 24px internal padding as the action cards — the brief asks for
+   consistent internal spacing. Separation comes from elevation, tint and
+   type scale instead, not from cramping this tier. */
+.info-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-lg);
+  background: var(--surface-gradient);
+  border: 1px solid var(--border-strong);
+  box-shadow: 0 1px 1px rgb(var(--slate-rgb) / 0.035);
+  transition: box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.info-card:hover {
+  border-color: rgb(var(--teal-rgb) / 0.32);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.info-link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease, gap 0.2s ease;
+}
+.info-link:hover {
+  color: var(--accent-hover);
+  gap: 9px;
+}
+
+/* Icon chip for section headings — small, tinted, never competing with
+   the action cards' filled gradient icons. */
+.section-chip {
+  display: flex;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: rgb(var(--teal-rgb) / 0.1);
+  border: 1px solid rgb(var(--teal-rgb) / 0.16);
+  color: var(--primary);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   APP BACKGROUND
+   Applied once on <body>, so landing, dashboard, chat and settings all
+   share it. Two fixed layers — a faint teal glow anchored top-centre and
+   a barely-visible dot grid — so no page is ever dead-flat grey.
+
+   `background-attachment: fixed` keeps the glow anchored to the viewport
+   rather than sliding away on long pages.
+   ═══════════════════════════════════════════════════════════════════ */
+.app-bg {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(rgb(var(--slate-rgb) / 0.038) 1px, transparent 1px),
+    radial-gradient(80% 55% at 50% 0%, rgb(var(--teal-rgb) / 0.07) 0%, transparent 68%);
+  background-size: 26px 26px, 100% 100%;
+  background-position: 0 0, 50% 0;
+  background-repeat: repeat, no-repeat;
+  background-attachment: fixed, fixed;
+}
+
+/* Panels that sit on top of the body background and need to hide it
+   (the dashboard main column, chat transcript) opt out with this. */
+.app-bg-solid {
+  background-color: var(--background);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   APP SHELL CHROME
+   Sidebar, top bar, bottom nav and FAB. Previously these lived in
+   per-component `<style dangerouslySetInnerHTML>` blocks, which meant
+   four copies of the same easing curve and no shared hover language.
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Sidebar ── */
+.sb-nav-label {
+  padding: 0 var(--space-3);
+  margin-bottom: var(--space-2);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sb-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: var(--body);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  position: relative;
+  transition: background-color 0.2s ease, color 0.2s ease,
+              border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sb-link .sb-icon {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+.sb-link:hover:not(.is-active) {
+  background: rgb(var(--slate-rgb) / 0.04);
+  color: var(--heading);
+}
+.sb-link:hover:not(.is-active) .sb-icon {
+  color: var(--body);
+}
+
+/* Active state: filled card + a rail flush to the item's left edge.
+   The rail is inset rather than absolute-positioned at x=0 so it never
+   collides with the item's border-radius. */
+.sb-link.is-active {
+  background: var(--surface-card);
+  color: var(--accent);
+  font-weight: 700;
+  border-color: rgb(var(--teal-rgb) / 0.16);
+  box-shadow: 0 1px 2px rgb(var(--slate-rgb) / 0.04), 0 4px 12px -4px rgb(var(--teal-rgb) / 0.22);
+}
+.sb-link.is-active .sb-icon {
+  color: var(--accent);
+}
+.sb-link.is-active::before {
+  content: '';
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 20px;
+  border-radius: 0 3px 3px 0;
+  background: var(--accent);
+}
+
+.sb-profile {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--surface-card);
+  text-decoration: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sb-profile:hover {
+  border-color: rgb(var(--teal-rgb) / 0.3);
+  box-shadow: var(--shadow-card);
+}
+
+/* ── Bottom nav (mobile) ── */
+.bn-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--muted);
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.bn-item.is-active {
+  color: var(--accent);
+}
+.bn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 26px;
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+}
+.bn-item.is-active .bn-icon {
+  background: var(--accent-tint);
+}
+.bn-item:active .bn-icon {
+  transform: scale(0.92);
+}
+
+/* ── Floating action button ──
+   Anchored to the same 24px gutter as the page content so it reads as
+   part of the layout rather than floating arbitrarily. */
+.fab {
+  position: fixed;
+  right: var(--space-4);
+  bottom: calc(var(--bottomnav-h) + var(--space-4));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: var(--primary-gradient);
+  color: var(--primary-foreground);
+  text-decoration: none;
+  z-index: 50;
+  box-shadow: 0 2px 6px rgb(var(--slate-rgb) / 0.08),
+              0 10px 24px -6px rgb(var(--teal-rgb) / 0.45);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+}
+.fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgb(var(--slate-rgb) / 0.1),
+              0 16px 32px -8px rgb(var(--teal-rgb) / 0.55);
+}
+.fab:active {
+  transform: translateY(0) scale(0.94);
+}
+
+/* On desktop there is no bottom nav to clear. */
+@media (min-width: 769px) {
+  .fab {
+    bottom: var(--space-4);
+  }
+}
+
+.fab-tooltip {
+  position: absolute;
+  right: calc(100% + var(--space-2));
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: var(--heading);
+  color: var(--slate-0);
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgb(var(--slate-rgb) / 0.16);
+  transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+  transform: translateX(4px);
+}
+.fab:hover .fab-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+}
+
+/* ── Hero background treatment ──
+   Two stacked layers: a teal radial glow that anchors the content block,
+   and a dot grid masked to fade out before it reaches any edge, so the
+   space around the headline reads as textured rather than empty. */
+.hero-glow {
+  background-image: radial-gradient(
+    110% 72% at 50% 8%,
+    rgb(var(--teal-rgb) / 0.16) 0%,
+    rgb(var(--teal-rgb) / 0.05) 40%,
+    transparent 72%
+  );
+}
+
+.hero-dots {
+  background-image: radial-gradient(rgb(var(--slate-rgb) / 0.16) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(70% 58% at 50% 34%, #000 0%, transparent 100%);
+  mask-image: radial-gradient(70% 58% at 50% 34%, #000 0%, transparent 100%);
+  opacity: 0.5;
 }
 
 /*
@@ -182,9 +882,25 @@
     Grid gaps           gap-6 (cards) · gap-8–12 (steps/stats)
 
   Radius: chips/inputs 8px · buttons 12px (rounded-xl) · cards 16–24px · pills full
-  Borders: 1px  #E2E8F0 on light · white/10 on dark
   Elevation: --shadow-card at rest → --shadow-card-hover on hover; --shadow-panel for signature surfaces
-  Muted text: #475569 (secondary) · #94A3B8 (tertiary) on light · white/60–70 on dark
+
+  ── Colour: use SEMANTIC tokens, never a raw hex ──
+  Surfaces    --background (page)  --surface (card)  --surface-sunken (inset wells)
+  Text        --foreground · --foreground-secondary · --foreground-muted
+              --icon-muted is slate-400 and is for DECORATIVE ICONS ONLY —
+              it is 2.9:1 on white and fails AA as text.
+  Brand       --primary / -hover / -active / -foreground / -subtle / -muted
+              --primary-gradient for filled chips and the FAB
+  Ink         --secondary (avatars, dark CTAs)
+  Lines       --border · --border-strong · --border-primary
+  Status      --success · --warning · --destructive
+              each with -strong, -foreground and -subtle
+  Alpha       compose with the rgb triplets, e.g.
+              rgb(var(--teal-rgb) / 0.12), rgb(var(--slate-rgb) / 0.05)
+
+  Only ONE teal exists (--primary). Emerald is success-only, amber is
+  warning-only, red is Emergency/destructive-only. If a new green is
+  ever needed, the answer is --primary.
   ───────────────────────────────────────────────────────────────────
 */
 

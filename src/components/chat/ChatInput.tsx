@@ -118,8 +118,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
   return (
     <div style={{
       width: '100%',
-      backgroundColor: '#F8FAFC',
-      borderTop: '1px solid #E2E8F0',
+      backgroundColor: 'var(--background)',
+      borderTop: '1px solid var(--border)',
       padding: '16px',
       fontFamily: 'Inter, sans-serif'
     }}>
@@ -128,16 +128,16 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
           transition: all 0.2s ease;
         }
         .chat-icon-btn:hover:not(:disabled) {
-          background-color: #CCFBF1 !important;
-          color: #0D9488 !important;
+          background-color: var(--primary-muted) !important;
+          color: var(--primary) !important;
         }
         .chat-send-btn {
           transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .chat-send-btn:hover:not(:disabled) {
-          background-color: #0F766E !important;
+          background-color: var(--primary-hover) !important;
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(13,148,136,0.25);
+          box-shadow: 0 4px 12px rgb(var(--teal-rgb) / 0.25);
         }
         .chat-send-btn:active:not(:disabled) {
           transform: translateY(0);
@@ -150,8 +150,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
       `}} />
 
       {isListening && (
-        <div style={{ fontSize: '13px', color: '#DC2626', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: '#DC2626', borderRadius: '50%', animation: 'pulse-ring 1s infinite' }} />
+        <div style={{ fontSize: '13px', color: 'var(--destructive)', marginBottom: '8px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span style={{ display: 'inline-block', width: '8px', height: '8px', backgroundColor: 'var(--destructive)', borderRadius: '50%', animation: 'pulse-ring 1s infinite' }} />
           {language === 'hindi' ? '🎙 सुन रहा हूँ...' : '🎙 Listening...'}
         </div>
       )}
@@ -171,7 +171,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               height: '80px',
               width: 'auto',
               borderRadius: '12px',
-              border: '1px solid #E2E8F0',
+              border: '1px solid var(--border)',
               objectFit: 'cover'
             }}
           />
@@ -181,7 +181,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               position: 'absolute',
               top: '-8px',
               right: '-8px',
-              backgroundColor: '#DC2626',
+              backgroundColor: 'var(--destructive)',
               color: 'white',
               border: 'none',
               borderRadius: '50%',
@@ -191,7 +191,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+              boxShadow: '0 2px 4px rgb(var(--slate-rgb) / 0.12)'
             }}
           >
             <X size={12} />
@@ -204,10 +204,10 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
         alignItems: 'flex-end',
         gap: '6px',
         backgroundColor: 'white',
-        border: isFocused ? '1px solid #0D9488' : '1px solid #E2E8F0',
+        border: isFocused ? '1px solid var(--primary)' : '1px solid var(--border)',
         borderRadius: '16px',
         padding: '6px 12px',
-        boxShadow: isFocused ? '0 0 0 4px rgba(13,148,136,0.1)' : '0 4px 12px rgba(15,23,42,0.02)',
+        boxShadow: isFocused ? '0 0 0 4px rgb(var(--teal-rgb) / 0.1)' : '0 4px 12px rgb(var(--slate-rgb) / 0.02)',
         transition: 'all 0.2s ease'
       }}>
         <button 
@@ -219,7 +219,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             padding: '10px',
             border: 'none',
             background: 'transparent',
-            color: '#94A3B8',
+            color: 'var(--icon-muted)',
             cursor: 'pointer',
             borderRadius: '10px',
             display: 'flex',
@@ -240,7 +240,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             padding: '10px',
             border: 'none',
             background: 'transparent',
-            color: '#94A3B8',
+            color: 'var(--icon-muted)',
             cursor: 'pointer',
             borderRadius: '10px',
             display: 'flex',
@@ -290,7 +290,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             outline: 'none',
             padding: '10px 4px',
             fontSize: '15px',
-            color: '#0F172A',
+            color: 'var(--foreground)',
             fontWeight: '500',
             resize: 'none',
             lineHeight: '1.4'
@@ -311,8 +311,8 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
               alignItems: 'center',
               justifyContent: 'center',
               cursor: 'pointer',
-              backgroundColor: isListening ? '#DC2626' : 'transparent',
-              color: isListening ? 'white' : '#94A3B8',
+              backgroundColor: isListening ? 'var(--destructive)' : 'transparent',
+              color: isListening ? 'white' : 'var(--icon-muted)',
               outline: 'none',
               flexShrink: 0,
               position: 'relative'
@@ -324,7 +324,7 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
                 position: 'absolute',
                 inset: 0,
                 borderRadius: '12px',
-                border: '2px solid #DC2626',
+                border: '2px solid var(--destructive)',
                 animation: 'pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite'
               }} />
             )}
@@ -345,11 +345,11 @@ export function ChatInput({ onSendMessage, disabled }: ChatInputProps) {
             alignItems: 'center',
             justifyContent: 'center',
             cursor: isBtnDisabled ? 'not-allowed' : 'pointer',
-            backgroundColor: isBtnDisabled ? '#F8FAFC' : '#0D9488',
-            color: isBtnDisabled ? '#94A3B8' : 'white',
+            backgroundColor: isBtnDisabled ? 'var(--background)' : 'var(--primary)',
+            color: isBtnDisabled ? 'var(--icon-muted)' : 'white',
             outline: 'none',
             flexShrink: 0,
-            boxShadow: isBtnDisabled ? 'none' : '0 4px 12px rgba(13,148,136,0.2)'
+            boxShadow: isBtnDisabled ? 'none' : '0 4px 12px rgb(var(--teal-rgb) / 0.2)'
           }}
         >
           <Send size={18} />

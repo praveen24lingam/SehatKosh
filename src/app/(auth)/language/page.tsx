@@ -20,7 +20,7 @@ export default function LanguageSelectPage() {
       <div 
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(13,148,136, 0.12) 0%, transparent 70%)'
+          background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgb(var(--teal-rgb) / 0.12) 0%, transparent 70%)'
         }}
       />
       

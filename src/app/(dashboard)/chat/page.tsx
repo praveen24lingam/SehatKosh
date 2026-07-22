@@ -119,9 +119,9 @@ export default function ChatPage() {
           justify-content: flex-end;
           margin: -24px -16px 4px;
           padding: 12px 16px;
-          background: rgba(248, 250, 252, 0.85);
+          background: rgb(248 250 252 / 0.85);
           backdrop-filter: blur(8px);
-          border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+          border-bottom: 1px solid rgb(var(--slate-rgb) / 0.06);
         }
         .chat-newchat-btn {
           display: inline-flex;
@@ -130,25 +130,25 @@ export default function ChatPage() {
           padding: 8px 14px;
           font-size: 14px;
           font-weight: 600;
-          color: #0D9488;
-          background: #FFFFFF;
-          border: 1px solid rgba(13, 148, 136, 0.28);
+          color: var(--primary);
+          background: var(--surface);
+          border: 1px solid rgb(var(--teal-rgb) / 0.28);
           border-radius: 12px;
           cursor: pointer;
           outline: none;
           transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
         }
         .chat-newchat-btn:hover {
-          background: #0D9488;
-          color: #FFFFFF;
-          box-shadow: 0 6px 16px rgba(13, 148, 136, 0.22);
+          background: var(--primary);
+          color: var(--surface);
+          box-shadow: 0 6px 16px rgb(var(--teal-rgb) / 0.22);
         }
         .chat-newchat-btn:active {
-          background: #0F766E;
-          color: #FFFFFF;
+          background: var(--primary-hover);
+          color: var(--surface);
         }
         .chat-newchat-btn:focus-visible {
-          box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+          box-shadow: 0 0 0 3px rgb(var(--teal-rgb) / 0.2);
         }
 
         /* Empty-state scale: one step down on small screens so the heading
@@ -164,13 +164,13 @@ export default function ChatPage() {
           font-weight: 700;
           line-height: 1.25;
           letter-spacing: -0.5px;
-          color: #0F172A;
+          color: var(--foreground);
           margin: 0 0 10px;
         }
         .chat-empty-subtitle {
           font-size: 15px;
           line-height: 1.6;
-          color: #475569;
+          color: var(--foreground-secondary);
           max-width: 400px;
           margin: 0;
         }
@@ -197,7 +197,7 @@ export default function ChatPage() {
         display: 'flex',
         flexDirection: 'column',
         gap: '12px',
-        backgroundColor: '#F8FAFC'
+        backgroundColor: 'transparent'
       }}>
         {messages.length > 0 && (
           <div className="chat-newchat-bar">
@@ -231,14 +231,14 @@ export default function ChatPage() {
               <div style={{
                 width: '56px',
                 height: '56px',
-                background: 'rgba(13,148,136,0.08)',
+                background: 'rgb(var(--teal-rgb) / 0.08)',
                 borderRadius: '50%',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 marginBottom: '16px'
               }}>
-                <Sparkles size={26} color="#0D9488" strokeWidth={1.75} />
+                <Sparkles size={26} color="var(--primary)" strokeWidth={1.75} />
               </div>
               <h2 className={`chat-empty-title ${language === 'hindi' ? 'font-hindi' : ''}`}>
                 {/* Greet by first name when we have one. */}

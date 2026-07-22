@@ -20,35 +20,35 @@ export function EmptyState({ icon: Icon, title, description, action }: EmptyStat
       padding: '48px 32px',
       textAlign: 'center',
       borderRadius: '20px',
-      backgroundColor: '#F8FAFC',
-      border: '1px dashed rgba(15,23,42, 0.12)',
-      boxShadow: '0 4px 20px rgba(15,23,42,0.02)',
+      backgroundColor: 'var(--background)',
+      border: '1px dashed rgb(var(--slate-rgb) / 0.12)',
+      boxShadow: '0 4px 20px rgb(var(--slate-rgb) / 0.02)',
       fontFamily: 'Inter, sans-serif'
     }}>
       <div style={{
         width: '64px',
         height: '64px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, rgba(13,148,136,0.08) 0%, rgba(20,184,166,0.04) 100%)',
+        background: 'linear-gradient(135deg, rgb(var(--teal-rgb) / 0.08) 0%, rgb(var(--teal-light-rgb) / 0.04) 100%)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: '20px',
-        boxShadow: '0 4px 12px rgba(13,148,136,0.05)'
+        boxShadow: '0 4px 12px rgb(var(--teal-rgb) / 0.05)'
       }}>
-        <Icon size={28} strokeWidth={2} style={{ color: '#0D9488' }} />
+        <Icon size={28} strokeWidth={2} style={{ color: 'var(--primary)' }} />
       </div>
       <h4 style={{
         fontSize: '18px',
         fontWeight: '700',
-        color: '#0F172A',
+        color: 'var(--foreground)',
         marginBottom: '8px'
       }}>
         {title}
       </h4>
       <p style={{
         fontSize: '14px',
-        color: '#475569',
+        color: 'var(--foreground-secondary)',
         marginBottom: '24px',
         maxWidth: '320px',
         lineHeight: '1.5'

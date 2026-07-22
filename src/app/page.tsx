@@ -8,7 +8,10 @@ import { Footer } from '@/components/landing/Footer';
 
 export default function Home() {
   return (
-    <main className="w-full min-h-screen bg-[#F8FAFC] font-sans text-[#0F172A] overflow-x-hidden relative">
+    // No background of its own — the app-wide glow + dot grid on <body>
+    // (.app-bg) shows through, so the landing page shares the same
+    // treatment as the dashboard, chat and settings.
+    <main className="w-full min-h-screen font-sans text-[var(--foreground)] overflow-x-hidden relative">
       <Navbar />
       
       {/* 

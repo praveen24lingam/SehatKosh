@@ -16,21 +16,23 @@ export function BottomNav() {
   ]
 
   return (
-    <nav className="mobile-only" style={{
-      position: 'fixed',
-      bottom: '16px',
-      left: '16px',
-      right: '16px',
-      backgroundColor: 'rgba(255, 255, 255, 0.85)',
-      backdropFilter: 'blur(20px)',
-      border: '1px solid rgba(15,23,42, 0.06)',
-      borderRadius: '20px',
-      zIndex: 50,
-      boxShadow: '0 12px 32px rgba(15,23,42, 0.08)',
-      paddingBottom: '0px',
-      fontFamily: 'Inter, sans-serif'
-    }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around', padding: '6px' }}>
+    <nav
+      className="mobile-only"
+      style={{
+        position: 'fixed',
+        bottom: 'var(--space-3)',
+        left: 'var(--space-3)',
+        right: 'var(--space-3)',
+        backgroundColor: 'rgba(255,255,255,0.88)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        border: '1px solid var(--border)',
+        borderRadius: 'var(--radius-lg)',
+        zIndex: 50,
+        boxShadow: '0 2px 6px rgb(var(--slate-rgb) / 0.04), 0 12px 28px -8px rgb(var(--slate-rgb) / 0.16)',
+      }}
+    >
+      <div style={{ display: 'flex', alignItems: 'stretch', gap: 'var(--space-1)', padding: 'var(--space-1)' }}>
         {navItems.map((item) => {
           const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
           const Icon = item.icon
@@ -39,39 +41,16 @@ export function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6px 10px',
-                minWidth: '56px',
-                textDecoration: 'none',
-                color: isActive ? '#0D9488' : '#94A3B8',
-                transition: 'all 0.25s cubic-bezier(0.16, 1, 0.3, 1)',
-                cursor: 'pointer'
-              }}
+              aria-current={isActive ? 'page' : undefined}
+              className={`bn-item ${isActive ? 'is-active' : ''}`}
             >
-              <div style={{
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '32px',
-                height: '32px',
-                borderRadius: '8px',
-                marginBottom: '2px',
-                backgroundColor: isActive ? '#CCFBF1' : 'transparent',
-                transition: 'all 0.25s ease'
-              }}>
-                <Icon size={18} style={{ transform: isActive ? 'scale(1.1)' : 'scale(1)', color: isActive ? '#0D9488' : '#94A3B8' }} />
-              </div>
-              <span style={{
-                fontSize: '10px',
-                fontWeight: isActive ? '700' : '500',
-                letterSpacing: '0.01em',
-                lineHeight: '1.2'
-              }} className={language === 'hindi' ? 'font-hindi' : ''}>
+              <span className="bn-icon">
+                <Icon size={18} strokeWidth={isActive ? 2.4 : 2} />
+              </span>
+              <span
+                className={language === 'hindi' ? 'font-hindi' : ''}
+                style={{ fontSize: '10.5px', fontWeight: isActive ? 700 : 500, lineHeight: 1.2 }}
+              >
                 {language === 'hindi' ? item.labelHi : item.labelEn}
               </span>
             </Link>

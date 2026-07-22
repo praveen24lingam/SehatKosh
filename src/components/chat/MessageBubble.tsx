@@ -39,11 +39,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           gap: '4px'
         }}>
           <div style={{
-            background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
+            background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--primary) 100%)',
             color: 'white',
             borderRadius: '16px 16px 4px 16px',
             padding: '16px',
-            boxShadow: '0 4px 12px rgba(13,148,136,0.12)'
+            boxShadow: '0 4px 12px rgb(var(--teal-rgb) / 0.12)'
           }}>
             {message.imageUrl && (
               // Base64 data-URI upload; next/image cannot optimize data URIs.
@@ -94,11 +94,11 @@ export function MessageBubble({ message }: MessageBubbleProps) {
       }}>
         <div style={{
           background: 'white',
-          border: '1px solid rgba(15,23,42,0.06)',
-          borderTop: '3px solid #14B8A6',
+          border: '1px solid var(--border-strong)',
+          borderTop: '3px solid var(--accent-light)',
           borderRadius: '0 0 16px 16px',
           padding: '20px',
-          boxShadow: '0 4px 12px rgba(15,23,42,0.02)'
+          boxShadow: '0 4px 12px rgb(var(--slate-rgb) / 0.02)'
         }}>
           {/* Header area */}
           <div style={{
@@ -106,26 +106,26 @@ export function MessageBubble({ message }: MessageBubbleProps) {
             alignItems: 'center',
             gap: '8px',
             paddingBottom: '10px',
-            borderBottom: '1px solid #E2E8F0',
+            borderBottom: '1px solid var(--border)',
             marginBottom: '16px'
           }}>
             <div style={{
               width: '30px',
               height: '30px',
               borderRadius: '50%',
-              background: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
+              background: 'linear-gradient(135deg, var(--accent-light) 0%, var(--primary) 100%)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               color: 'white',
-              boxShadow: '0 2px 6px rgba(13,148,136,0.15)'
+              boxShadow: '0 2px 6px rgb(var(--teal-rgb) / 0.15)'
             }}>
               <Bot size={16} />
             </div>
             <span style={{
               fontWeight: '700',
               fontSize: '14px',
-              color: '#0F172A'
+              color: 'var(--foreground)'
             }}>
               Sehat Saathi
             </span>
@@ -133,7 +133,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
           
           {/* Content area */}
           <div style={{
-            color: '#475569',
+            color: 'var(--foreground-secondary)',
             fontSize: '15px',
             lineHeight: '1.6'
           }}>
@@ -143,7 +143,7 @@ export function MessageBubble({ message }: MessageBubbleProps) {
                 if (!line.includes('**')) return line
                 const parts = line.split('**')
                 return parts.map((part, index) => 
-                  index % 2 === 1 ? <strong key={index} style={{ color: '#0F172A', fontWeight: '700' }}>{part}</strong> : part
+                  index % 2 === 1 ? <strong key={index} style={{ color: 'var(--foreground)', fontWeight: '700' }}>{part}</strong> : part
                 )
               }
               return (
